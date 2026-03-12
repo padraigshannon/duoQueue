@@ -108,6 +108,6 @@ CREATE TABLE message (
     message TEXT,
     sender_id INT,
     receiver_id INT,
-    created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- TO BE CONTINUED!!!!
 )
 
