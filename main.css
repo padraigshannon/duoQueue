@@ -3,6 +3,7 @@
     justify-content:center;
     align-items:center;
     height:80vh;
+}
 
 body {
     margin: 0;
@@ -29,7 +30,6 @@ body {
     width:260px;
 }
 
-<<<<<<< HEAD
 .login-box h2{
     margin-bottom:20px;
 }
@@ -50,7 +50,8 @@ body {
     color:white;
     border-radius:4px;
     cursor:pointer;
-    
+}
+
 nav {
     margin: 0 20px;
     text-decoration: none;
@@ -98,6 +99,12 @@ nav a {
 
 h3 {
     color: #00ffff;
+    text-shadow:
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #00ffff,
+        0 0 8px #0088ff;
+}
     text-shadow:
         0 0 1px #00ffff,
         0 0 2px #00ffff,
