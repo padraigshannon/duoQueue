@@ -15,7 +15,7 @@ CREATE TABLE users (
 CREATE TABLE user_profiles (
     user_id INT PRIMARY KEY,
     location VARCHAR(255),
-    profile_photo VARCHAR(255)
+    profile_photo VARCHAR(255),
     date_of_birth DATE,
     gender ENUM('Male', 'Female', 'Other'),
     seeking ENUM('Male', 'Female', 'Other'),
@@ -27,7 +27,7 @@ CREATE TABLE user_profiles (
 
 CREATE TABLE user_photos (
     user_id INT,
-    photo VARCHAR(255)
+    photo VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
@@ -45,8 +45,8 @@ CREATE TABLE game_genres (
     game_id INT,
     genre_id INT,
     PRIMARY KEY (game_id, genre_id),
-    FOREIGN KEY (game_id) REFERENCES games(game_id),
-    FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
+    FOREIGN KEY (game_id) REFERENCES available_games(game_id),
+    FOREIGN KEY (genre_id) REFERENCES available_genres(genre_id)
 );
 
 CREATE TABLE users_games (
@@ -111,3 +111,22 @@ CREATE TABLE message (
     created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- TO BE CONTINUED!!!!
 )
 
+CREATE TABLE reports (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    reporting_user_id INT,
+    reported_user_id INT,
+    reason TEXT,
+    created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reporting_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (reported_user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE banned (
+    user_id INT PRIMARY KEY,
+    admin_id INT,
+    reason TEXT,
+    ban_duration INT,
+    created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (admin_id) REFERENCES users(user_id)
+)
