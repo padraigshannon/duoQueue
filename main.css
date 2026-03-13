@@ -1,8 +1,26 @@
+<<<<<<< HEAD
 .content{
     display:flex;
     justify-content:center;
     align-items:center;
     height:80vh;
+=======
+body {
+    margin: 0;
+    background-image: url("assets/Background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Press Start 2P', cursive;
+>>>>>>> c9abbbe3a1063b9f8c007f3a32e7ddbc305c867b
 }
 
 .login-box{
@@ -13,6 +31,7 @@
     width:260px;
 }
 
+<<<<<<< HEAD
 .login-box h2{
     margin-bottom:20px;
 }
@@ -33,4 +52,58 @@
     color:white;
     border-radius:4px;
     cursor:pointer;
+=======
+nav {
+    margin: 0 20px;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+/* Page content */
+.content {
+    padding: 20px;
+}
+
+/* Neon text effect */
+h1, a {
+    color: #00ffff;
+    text-shadow:
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #00ffff,
+        0 0 8px #0088ff;
+}
+
+/* Navigation bar */
+nav {
+    position: absolute;
+    top: 20px;
+}
+
+nav a {
+    margin: 20px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* Center content */
+.center {
+    text-align: center;
+}
+
+/* Logo */
+.logo {
+    width: 450px;
+    display: flex;
+    margin: 0 auto 30px auto;
+}
+
+h3 {
+    color: #00ffff;
+    text-shadow:
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #00ffff,
+        0 0 8px #0088ff;
+>>>>>>> c9abbbe3a1063b9f8c007f3a32e7ddbc305c867b
 }

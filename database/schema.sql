@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS myproject_db;
 USE myproject_db;
 
-CREATE TABLE users (
+CREATE TABLE users ( --- NO ISSUE
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -12,7 +12,7 @@ CREATE TABLE users (
     created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE user_profiles (
+CREATE TABLE user_profiles ( --- NO ISSUE
     user_id INT PRIMARY KEY,
     location VARCHAR(255),
     profile_photo VARCHAR(255),
@@ -25,23 +25,23 @@ CREATE TABLE user_profiles (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE user_photos (
+CREATE TABLE user_photos ( --- NO ISSUE
     user_id INT,
     photo VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE available_genres (
+CREATE TABLE available_genres ( --- NO ISSUE
     genre_id INT AUTO_INCREMENT PRIMARY KEY,
     genre_name VARCHAR(255)
 );
 
-CREATE TABLE available_games (
+CREATE TABLE available_games ( --- NO ISSUE
     game_id INT AUTO_INCREMENT PRIMARY KEY,
     game_name VARCHAR(255)
 );
 
-CREATE TABLE game_genres (
+CREATE TABLE game_genres ( --- NO ISSUE
     game_id INT,
     genre_id INT,
     PRIMARY KEY (game_id, genre_id),
@@ -49,20 +49,20 @@ CREATE TABLE game_genres (
     FOREIGN KEY (genre_id) REFERENCES available_genres(genre_id)
 );
 
-CREATE TABLE users_games (
-    user_id INT,
+CREATE TABLE users_games ( --- NO ISSUE
+    user_id INT, 
     game_id INT,
     PRIMARY KEY (user_id, game_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (game_id) REFERENCES available_games(game_id)
 );
 
-CREATE TABLE available_platforms (
+CREATE TABLE available_platforms ( --- NO ISSUE
     platform_id INT AUTO_INCREMENT PRIMARY KEY,
     platform_name VARCHAR(255)
 );
 
-CREATE TABLE user_platforms (
+CREATE TABLE user_platforms ( --- NO ISSUE
     user_id INT,
     platform_id INT,
     platform_username VARCHAR(255),
@@ -109,7 +109,7 @@ CREATE TABLE message (
     sender_id INT,
     receiver_id INT,
     created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- TO BE CONTINUED!!!!
-)
+);
 
 CREATE TABLE reports (
     report_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -129,4 +129,4 @@ CREATE TABLE banned (
     created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (admin_id) REFERENCES users(user_id)
-)
+);
