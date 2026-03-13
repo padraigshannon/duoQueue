@@ -1,75 +1,36 @@
-body {
-    margin: 0;
-    background-image: url("assets/Background.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    font-family: 'Press Start 2P', cursive;
+.content{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:80vh;
 }
 
-/* This represents the arcade screen area */
-.screen {
-    width: 800px;
-    margin: auto;
-    padding-top: 60px;
-    text-align: center;
+.login-box{
+    background:#d9d9d9;
+    padding:30px;
+    border-radius:10px;
+    text-align:center;
+    width:260px;
 }
 
-@keyframes glow {
-    0%,100% { text-shadow: 0 0 5px #0ff, 0 0 20px #0ff; }
-    50% { text-shadow: 0 0 15px #0ff, 0 0 40px #0ff; }
+.login-box h2{
+    margin-bottom:20px;
 }
 
-
-nav {
-    margin: 0 20px;
-    text-decoration: none;
-    font-size: 20px;
+.login-box input{
+    width:100%;
+    padding:8px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:4px;
 }
 
-/* Page content */
-.content {
-    padding: 20px;
-}
-
-/* Neon text effect */
-h1, a {
-    color: #00ffff;
-    text-shadow:
-        0 0 5px #00ffff,
-        0 0 10px #00ffff,
-        0 0 20px #00ffff,
-        0 0 40px #0088ff;
-    animation: glow 2s infinite alternate;
-}
-
-/* Navigation bar */
-nav {
-    position: absolute;
-    top: 20px;
-}
-
-nav a {
-    margin: 20px;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-/* Center content */
-.center {
-    text-align: center;
-}
-
-/* Logo */
-.logo {
-    width: 300px;
-    display: block;
-    margin: 0 auto 30px auto;
+.login-box button{
+    width:100%;
+    padding:8px;
+    background:#3b82f6;
+    border:none;
+    color:white;
+    border-radius:4px;
+    cursor:pointer;
 }
