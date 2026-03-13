@@ -11,16 +11,10 @@
 
     <div class="screen">
 
-        <nav>
-            <a href="profile.html">Profile</a>
-            <a href="matchmake.html">Matchmake</a>
-            <a href="browse.html">Browse</a>
-        </nav>
-
         <div class="content">
-            <h1>Welcome DuoQueue</h1>
+            <h1>Welcome to DuoQueue</h1>
             <img src="assets/logoImage.png" alt="Logo Image" class="logo">
-            <p>Creating Lobbys for Lovestories...</p>
+            <h3>Press Start to find love...</h3>
         </div>
 
     </div>
