@@ -22,13 +22,13 @@ CREATE TABLE user_profiles (
     about_me TEXT,
     smoker BOOLEAN,
     drinker BOOLEAN,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE user_photos ( 
     user_id INT NOT NULL,
     photo VARCHAR(255),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_user_photos_user_id ON user_photos(user_id);
@@ -47,8 +47,8 @@ CREATE TABLE game_genres (
     game_id INT NOT NULL,
     genre_id INT NOT NULL,
     PRIMARY KEY (game_id, genre_id),
-    FOREIGN KEY (game_id) REFERENCES available_games(game_id),
-    FOREIGN KEY (genre_id) REFERENCES available_genres(genre_id)
+    FOREIGN KEY (game_id) REFERENCES available_games(game_id) ON DELETE CASCADE,
+    FOREIGN KEY (genre_id) REFERENCES available_genres(genre_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_game_genres_game_id ON game_genres(game_id);
@@ -58,8 +58,8 @@ CREATE TABLE users_games (
     user_id INT NOT NULL, 
     game_id INT NOT NULL,
     PRIMARY KEY (user_id, game_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (game_id) REFERENCES available_games(game_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (game_id) REFERENCES available_games(game_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_users_games_user_id ON users_games(user_id);
@@ -75,8 +75,8 @@ CREATE TABLE user_platforms (
     platform_id INT NOT NULL,
     platform_username VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id, platform_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (platform_id) REFERENCES available_platforms(platform_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (platform_id) REFERENCES available_platforms(platform_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_user_platforms_user_id ON user_platforms(user_id);
@@ -88,8 +88,8 @@ CREATE TABLE likes (
     liked_user_id INT NOT NULL,
     status ENUM('PROCESSING', 'MATCHED', 'REJECTED') NOT NULL DEFAULT 'PROCESSING',
     created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (liked_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (liked_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CHECK (user_id <> liked_user_id),
     UNIQUE (user_id, liked_user_id)
 );
@@ -102,8 +102,8 @@ CREATE TABLE dislikes (
     user_id INT NOT NULL,
     disliked_user_id INT NOT NULL,
     created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (disliked_user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (disliked_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CHECK (user_id <> disliked_user_id),
     UNIQUE (user_id, disliked_user_id)
 );
@@ -116,8 +116,8 @@ CREATE TABLE matches (
     user1_id INT NOT NULL,
     user2_id INT NOT NULL,
     created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user1_id) REFERENCES users(user_id),
-    FOREIGN KEY (user2_id) REFERENCES users(user_id),
+    FOREIGN KEY (user1_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user2_id) REFERENCES users(user_id) ON DELETE CASCADE,
     CHECK (user1_id <> user2_id),
     UNIQUE (user1_id, user2_id)
 );
