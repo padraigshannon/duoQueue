@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS duoqueue_db;
-USE duoqueue_db;
 
 CREATE TABLE users ( 
     user_id INT AUTO_INCREMENT PRIMARY KEY,
