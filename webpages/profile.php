@@ -17,8 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Profile Setup</title>
 
-<!-- Link your shared CSS -->
-<link rel="stylesheet" href="assets/main.css">
+<link rel="stylesheet" href="../assets/arcade.css">
 
 <style>
 /* Page-specific styles (keep layout) */

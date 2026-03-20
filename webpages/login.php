@@ -12,9 +12,11 @@
     <div class="screen">
 
         <nav>
-            <a href="profile.html">Profile</a>
-            <a href="matchmake.html">Matchmake</a>
-            <a href="browse.html">Browse</a>
+            <a href="home.php">Home</a>
+            <a href="profile.php">Profile</a>
+            <a href="matchmake.php">Matchmake</a>
+            <a href="matches.php">My Duo's</a>
+            <a href="aboutus.php">About Us</a>
         </nav>
 
         <div class="content">
