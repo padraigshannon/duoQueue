@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    background-color: black;
+    background-image: url("Background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Press Start 2P', cursive;
+}
+
+.landing-logo { 
+    width: 420px;
+    display: flex;
+    margin: 0 auto 30px auto;
+}
+
+h1, a, h3 { /* Header Colors */
+    color: #00ffff;
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+}
+
+.content {
+    justify-content:center;
+    align-items:center;
+    padding: 10px;
+    height:75vh;
+}
+
+.clickable-content {       
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    height: 75vh;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* LOGIN CLASSES */
