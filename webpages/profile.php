@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <title>Profile Setup</title>
 
 <!-- Link your shared CSS -->
-<link rel="stylesheet" href="main.css">
+<link rel="stylesheet" href="assets/main.css">
 
 <style>
 /* Page-specific styles (keep layout) */
