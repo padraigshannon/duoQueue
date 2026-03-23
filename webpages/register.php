@@ -38,8 +38,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             try {
                 // is_admin and is_banned default to false for every new user
                 $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, is_admin, is_banned) VALUES (?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$firstName, $lastName, $email, $password, 0, 0]);
-                $success = "Account created successfully!";
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+                $stmt->execute([$firstName, $lastName, $email, $hashedPassword, 0, 0]);
+
+                $_SESSION['user_id'] = $pdo->lastInsertId();
+                $_SESSION['first_name'] = $firstName;
+                $_SESSION['last_name'] = $lastName;
+                header("Location: profile.php");
+                exit;
             } catch (PDOException $e) {
                 $error = "Registration failed: " . $e->getMessage();
             }
