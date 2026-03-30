@@ -1,153 +1,200 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST["name"];
-    $age = $_POST["age"];
-    $location = $_POST["location"];
-    $orientation = $_POST["orientation"];
-    $bio = $_POST["bio"];
+session_start();
 
-    $success = "Profile saved successfully!";
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+$host = 'sql113.infinityfree.com';
+$db   = 'if0_41396749_duoqueue_db';
+$user = 'if0_41396749';
+$pass = 'VQtMPg6j4SF2';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$userId = $_SESSION['user_id'];
+$success = "";
+$error = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $location = trim($_POST["location"]);
+    $dateOfBirth = trim($_POST["date_of_birth"]);
+    $gender = trim($_POST["gender"]);
+    $seeking = trim($_POST["seeking"]);
+    $aboutMe = trim($_POST["about_me"]);
+    $smoker = isset($_POST["smoker"]) ? 1 : 0;
+    $drinker = isset($_POST["drinker"]) ? 1 : 0;
+    $profilePhoto = "";
+
+    try {
+        $stmt = $pdo->prepare("INSERT INTO user_profiles (user_Id, location, date_of_birth, gender, seeking, about_me, smoker, drinker, profile_photo) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$userId, $location, $dateOfBirth, $gender, $seeking, $aboutMe, $smoker, $drinker, $profilePhoto]);
+        $success = "Profile edited successfully!";
+    } catch (PDOException $e) {
+        $error = "Profile update failed: " . $e->getMessage();
+    }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile Setup</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Setup</title>
 
-<link rel="stylesheet" href="../assets/arcade.css">
+    <link rel="stylesheet" href="../assets/arcade.css">
 
-<style>
-/* Page-specific styles (keep layout) */
-.main-container {
-    position: relative;
-    width: 90%;
-    max-width: 1100px;
-    height: 80vh;
-    display: flex;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(15px);
-    border-radius: 15px;
-    overflow: hidden;
-}
+    <style>
+        /* Page-specific styles (keep layout) */
+        .main-container {
+            position: relative;
+            width: 90%;
+            max-width: 1100px;
+            height: 80vh;
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            overflow: hidden;
+        }
 
-.preview {
-    flex: 1;
-    padding: 40px;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-right: 2px solid #00ffff;
-}
+        .preview {
+            flex: 1;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 2px solid #00ffff;
+        }
 
-.preview img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-    border: 3px solid #00ffff;
-}
+        .preview img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 3px solid #00ffff;
+        }
 
-.form-section {
-    flex: 1;
-    padding: 40px;
-    color: white;
-}
+        .form-section {
+            flex: 1;
+            padding: 40px;
+            color: white;
+        }
 
-.form-group {
-    margin-bottom: 15px;
-}
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-textarea {
-    resize: none;
-    height: 80px;
-}
-</style>
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="content">
-<div class="main-container">
+    <div class="content">
+        <div class="main-container">
 
-    <!-- Preview Panel -->
-    <div class="preview">
-        <img src="https://via.placeholder.com/150" id="profileImage">
-        <h2 id="previewName">Your Name</h2>
-        <p id="previewAge">Age</p>
-        <p id="previewLocation">Location</p>
-        <p id="previewOrientation">Orientation</p>
-        <p id="previewBio">Your bio will appear here...</p>
+            <!-- Preview Panel -->
+            <div class="preview">
+                <img src="https://via.placeholder.com/150" id="profileImage">
+                <h2 id="previewName">Your Name</h2>
+                <p id="previewAge">Age</p>
+                <p id="previewLocation">Location</p>
+                <p id="previewOrientation">Orientation</p>
+                <p id="previewBio">Your bio will appear here...</p>
+            </div>
+
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2>Set Up Your Profile</h2>
+
+                <?php if (!empty($success)): ?>
+                    <p style="color: lightgreen;"><?= htmlspecialchars($success) ?></p>
+                <?php endif; ?>
+
+                <?php if (!empty($error)): ?>
+                    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+                <?php endif; ?>
+
+                <form method="POST">
+                    <div class="form-group">
+                        <input type="text" name="location" placeholder="Location" id="locationInput" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth:</label>
+                        <input type="date" name="date_of_birth" placeholder="Date of Birth" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        <select name="gender" id="genderInput" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="seeking">Seeking:</label>
+                        <select name="seeking" id="seekingInput" required>
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="about_me" placeholder="Write a short bio..." id="bioInput" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" name="smoker"> Smoker</label>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" name="drinker"> Drinker</label>
+                    </div>
+
+                    <button type="submit">Save Profile</button>
+                </form>
+            </div>
+
+        </div>
     </div>
 
-    <!-- Form Section -->
-    <div class="form-section">
-        <h2>Set Up Your Profile</h2>
+    <!-- Live Preview Script -->
+    <script>
+        document.getElementById("locationInput").oninput = e =>
+            document.getElementById("previewLocation").textContent = e.target.value || "Location";
 
-        <?php if (!empty($success)): ?>
-            <p style="color: lightgreen;"><?php echo $success; ?></p>
-        <?php endif; ?>
+        document.getElementById("genderInput").onchange = e =>
+            document.getElementById("previewName").textContent = e.target.value || "Your Profile";
 
-        <form method="POST">
-            <div class="form-group">
-                <input type="text" name="name" placeholder="Display Name" id="nameInput" required>
-            </div>
+        document.getElementById("seekingInput").onchange = e =>
+            document.getElementById("previewOrientation").textContent = "Seeking: " + (e.target.value || "Nobody selected");
 
-            <div class="form-group">
-                <input type="number" name="age" placeholder="Age" id="ageInput" required>
-            </div>
-
-            <div class="form-group">
-                <input type="text" name="location" placeholder="Location" id="locationInput" required>
-            </div>
-
-            <div class="form-group">
-                <select name="orientation" id="orientationInput" required>
-                    <option disabled selected>Sexual Orientation</option>
-                    <option>Heterosexual</option>
-                    <option>Homosexual</option>
-                    <option>Lesbian</option>
-                    <option>Bisexual</option>
-                    <option>Pansexual</option>
-                    <option>Other</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <textarea name="bio" placeholder="Write a short bio..." id="bioInput"></textarea>
-            </div>
-
-            <button type="submit">Save Profile</button>
-        </form>
-    </div>
-
-</div>
-</div>
-
-<!-- Live Preview Script -->
-<script>
-document.getElementById("nameInput").oninput = e =>
-    document.getElementById("previewName").textContent = e.target.value || "Your Name";
-
-document.getElementById("ageInput").oninput = e =>
-    document.getElementById("previewAge").textContent = e.target.value ? "Age: " + e.target.value : "Age";
-
-document.getElementById("locationInput").oninput = e =>
-    document.getElementById("previewLocation").textContent = e.target.value || "Location";
-
-document.getElementById("orientationInput").onchange = e =>
-    document.getElementById("previewOrientation").textContent = e.target.value || "Orientation";
-
-document.getElementById("bioInput").oninput = e =>
-    document.getElementById("previewBio").textContent = e.target.value || "Bio";
-</script>
+        document.getElementById("bioInput").oninput = e =>
+            document.getElementById("previewBio").textContent = e.target.value || "Your bio will appear here...";
+    </script>
 
 </body>
+
 </html>
