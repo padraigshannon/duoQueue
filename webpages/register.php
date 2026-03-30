@@ -24,17 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
 
-    <link rel="stylesheet" href="assets/main.css">
+    <link rel="stylesheet" href="../assets/arcade.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 
 <body>
-
-<nav>
-    <a href="#">Home</a>
-    <a href="#">Login</a>
-</nav>
-
-<div class="content">
     <div class="login-box">
         <h2>Register</h2>
 
@@ -54,9 +48,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="password" name="repeat_password" placeholder="Repeat Password" required>
 
             <button type="submit">Create my account</button>
+            <a href="login.php" class="register-link">Already have an Account?</a>
         </form>
     </div>
-</div>
 
 </body>
 </html>

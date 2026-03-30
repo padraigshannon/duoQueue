@@ -22,7 +22,7 @@ body {
     margin: 0 auto 30px auto;
 }
 
-h1, a, h3 { /* Header Colors */
+h1, h3 { /* Header Colors */
     color: #00ffff;
     text-shadow:
         0 0 .5px #00ffff,
@@ -48,14 +48,117 @@ h1, a, h3 { /* Header Colors */
     cursor: pointer;
 }
 
-nav a {
+nav {
     margin: 0 20px;
     text-decoration: none;
     font-size: 14px;
     top: 15px;
+
+    color: #00ffff;
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
 }
 
+
+
 /* LOGIN/REGISTER CLASSES */
+.login-box {
+    position: relative;
+    background: transparent !important; 
+    border: 5px solid #00ffff;
+
+    box-shadow:
+        0 0 2px #00ffff,
+        0 0 4px #00ffff,
+        0 0 8px #00ffff,
+        0 0 12px #0088ff;
+
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+    height: 400;
+    width: 650px;            
+    padding: 20px 30px;        
+    margin: auto;         
+    text-align: center;
+} 
+
+.login-box::before,
+.login-box::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+}
+
+.login-box h2 {
+    color: #ffffff;
+    margin-bottom: 35px;
+    letter-spacing: 3px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 14px;
+    margin: 15px 0;
+
+    background-color: transparent !important; 
+    border: 1px solid #00ccff;
+    color: #ffffff;
+
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+
+    outline: none;
+    box-shadow: none;
+}
+
+.login-box input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
+
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.login-box button:hover {
+    background: #00ccff;
+    color: black;
+}
+
+.login-box button:active {
+    transform: scale(0.97);
+}
+
+.register-link {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
 
 
 /* PROFILE CLASSES */
