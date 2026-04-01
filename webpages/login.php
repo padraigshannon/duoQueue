@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" placeholder="Password" required>
 
                 <button type="submit">Login</button>
-                <a href="register.php" class="register-link">Sign up</a>
+                <a href="register.php" class="link">Sign up</a>
             </form>
         </div>
 </body>

@@ -17,9 +17,43 @@
             <a href="aboutus.php">About Us</a>
         </nav>
 
-        <div class="content">
-            
+        <div class="matches-container">
+
+    <!-- LEFT: MATCH LIST -->
+    <div class="matches-sidebar">
+        <div class="match-user">User 1</div>
+        <div class="match-user">User 2</div>
+        <div class="match-user">User 3</div>
+    </div>
+
+    <!-- RIGHT: CHAT -->
+    <div class="chat-area">
+
+        <!-- HEADER -->
+        <div class="chat-header">
+            <img src="../assets/profile.png" class="profile-pic">
+            <span class="username">MatchedUser</span>
+
+            <div class="header-buttons">
+                <button>View Profile</button>
+                <button class="danger">Unmatch</button>
+            </div>
         </div>
+
+        <!-- MESSAGES -->
+        <div class="chat-messages">
+            <p>Hello 👋</p>
+            <p>Hey!</p>
+        </div>
+
+        <!-- INPUT -->
+        <div class="chat-input">
+            <input type="text" placeholder="Type message...">
+            <button>Send</button>
+        </div>
+
+    </div>
+</div>
 
     </div>
 

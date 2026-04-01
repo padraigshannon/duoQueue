@@ -3,10 +3,10 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 session_start();
 
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="password" name="password" placeholder="Password" required>
             <input type="password" name="repeat_password" placeholder="Repeat Password" required>
             <button type="submit">Create my account</button>
-            <a href="login.php" class="register-link">Already have an Account?</a>
+            <a href="login.php" class="link">Already have an Account?</a>
         </form>
     </div>
 
