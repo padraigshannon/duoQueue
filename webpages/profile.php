@@ -4,21 +4,16 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'cs4116';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
-}
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
 }
 
 $userId = $_SESSION['user_id'];
@@ -54,22 +49,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Profile Setup</title>
 
     <link rel="stylesheet" href="../assets/arcade.css">
+
+    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
     <style>
-        /* Page-specific styles (keep layout) */
+        body {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ✅ FIXED CONTAINER */
         .main-container {
             position: relative;
             width: 90%;
-            width: 1000px;
-            height: 100%;
+            max-width: 1100px;
+
+            min-height: 80vh; /* FIX */
+            height: auto;
+
             display: flex;
-            background: transparent;
-            border: 5px solid #00ffff;
-            box-shadow: 0 0 12px #00ffff;
-            backdrop-filter: blur(15px);  
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+
             overflow: hidden;
         }
 
+        /* LEFT PREVIEW */
         .preview {
             flex: 1;
             padding: 40px;
@@ -80,137 +92,149 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             align-items: center;
             justify-content: center;
             border-right: 2px solid #00ffff;
+
+            overflow-y: auto; /* FIX */
+            text-align: center;
         }
 
         .preview img {
             width: 150px;
             height: 150px;
-            border-radius: 25%;
+            border-radius: 50%;
             object-fit: cover;
             margin-bottom: 20px;
             border: 3px solid #00ffff;
         }
 
+        /* RIGHT FORM */
         .form-section {
             flex: 1;
-            padding: 25px;
-            color: #ffffff;
+            padding: 40px;
+            color: white;
+
+            overflow-y: auto; /* FIX */
+            max-height: 80vh;
         }
 
-        .form-group { 
+        .form-group {
             margin-bottom: 15px;
-            padding: 20px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            background-color: #222;
+            color: white;
+            border: 1px solid #00ffff;
+            border-radius: 5px;
         }
 
         textarea {
             resize: none;
             height: 80px;
-            width: 100%;
-            padding: 14px;
-            margin: 15px 0;
-            box-sizing: border-box;
-
-            background-color: transparent !important;
-            border: 1px solid #00ccff;
-            color: #ffffff;
-
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            outline: none;
-            box-shadow: none;
         }
 
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #00ffff;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 
 </head>
 
 <body>
 
-    <div class="content">
-        <div class="main-container">
+<div class="content">
+    <div class="main-container">
 
-            <!-- Preview Panel -->
-            <div class="preview">
-                <img src="https://via.placeholder.com/150" id="profileImage">
-                <h2 id="previewName">Your Name</h2>
-                <p id="previewAge">Age</p>
-                <p id="previewLocation">Location</p>
-                <p id="previewOrientation">Orientation</p>
-                <p id="previewBio">Your bio will appear here...</p>
-            </div>
-
-            <!-- Form Section -->
-            <div class="form-section">
-                <h2>Set Up Your Profile</h2>
-
-                <?php if (!empty($success)): ?>
-                    <p style="color: lightgreen;"><?= htmlspecialchars($success) ?></p>
-                <?php endif; ?>
-
-                <?php if (!empty($error)): ?>
-                    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-                <?php endif; ?>
-
-                <form method="POST">
-                    <div class="form-group">
-                        <input type="text" name="location" placeholder="Location" id="locationInput" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="date_of_birth">Date of Birth:</label>
-                        <input type="date" name="date_of_birth" placeholder="Date of Birth" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="gender">Gender:</label>
-                        <select name="gender" id="genderInput" required>
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="seeking">Seeking:</label>
-                        <select name="seeking" id="seekingInput" required>
-                            <option value="">Select</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <textarea name="about_me" placeholder="Write a short bio..." id="bioInput" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label><input type="checkbox" name="smoker"> Smoker</label>
-                    </div>
-                    <div class="form-group">
-                        <label><input type="checkbox" name="drinker"> Drinker</label>
-                    </div>
-
-                    <button type="submit">Save Profile</button>
-                </form>
-            </div>
-
+        <!-- Preview -->
+        <div class="preview">
+            <img src="https://via.placeholder.com/150" id="profileImage">
+            <h2 id="previewName">Your Name</h2>
+            <p id="previewAge">Age</p>
+            <p id="previewLocation">Location</p>
+            <p id="previewOrientation">Orientation</p>
+            <p id="previewBio">Your bio will appear here...</p>
         </div>
+
+        <!-- Form -->
+        <div class="form-section">
+            <h2>Set Up Your Profile</h2>
+
+            <?php if (!empty($success)): ?>
+                <p style="color: lightgreen;"><?= htmlspecialchars($success) ?></p>
+            <?php endif; ?>
+
+            <?php if (!empty($error)): ?>
+                <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+            <?php endif; ?>
+
+            <form method="POST">
+                <div class="form-group">
+                    <input type="text" name="location" placeholder="Location" id="locationInput" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Date of Birth:</label>
+                    <input type="date" name="date_of_birth" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Gender:</label>
+                    <select name="gender" id="genderInput" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Seeking:</label>
+                    <select name="seeking" id="seekingInput" required>
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <textarea name="about_me" placeholder="Write a short bio..." id="bioInput" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><input type="checkbox" name="smoker"> Smoker</label>
+                </div>
+
+                <div class="form-group">
+                    <label><input type="checkbox" name="drinker"> Drinker</label>
+                </div>
+
+                <button type="submit">Save Profile</button>
+            </form>
+        </div>
+
     </div>
+</div>
 
-    <!-- Live Preview Script -->
-    <script>
-        document.getElementById("locationInput").oninput = e =>
-            document.getElementById("previewLocation").textContent = e.target.value || "Location";
+<script>
+document.getElementById("locationInput").oninput = e =>
+    document.getElementById("previewLocation").textContent = e.target.value || "Location";
 
-        document.getElementById("genderInput").onchange = e =>
-            document.getElementById("previewName").textContent = e.target.value || "Your Profile";
+document.getElementById("genderInput").onchange = e =>
+    document.getElementById("previewName").textContent = e.target.value || "Your Profile";
 
-        document.getElementById("seekingInput").onchange = e =>
-            document.getElementById("previewOrientation").textContent = "Seeking: " + (e.target.value || "Nobody selected");
+document.getElementById("seekingInput").onchange = e =>
+    document.getElementById("previewOrientation").textContent = "Seeking: " + (e.target.value || "Nobody selected");
 
-        document.getElementById("bioInput").oninput = e =>
-            document.getElementById("previewBio").textContent = e.target.value || "Your bio will appear here...";
-    </script>
+document.getElementById("bioInput").oninput = e =>
+    document.getElementById("previewBio").textContent = e.target.value || "Your bio will appear here...";
+</script>
 
 </body>
-
 </html>
