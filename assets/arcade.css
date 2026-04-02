@@ -22,7 +22,7 @@ body {
     margin: 0 auto 30px auto;
 }
 
-h1, a, h3 { /* Header Colors */
+h1, h3 { /* Header Colors */
     color: #00ffff;
     text-shadow:
         0 0 .5px #00ffff,
@@ -48,20 +48,245 @@ h1, a, h3 { /* Header Colors */
     cursor: pointer;
 }
 
-nav a {
-    margin: 0 20px;
-    text-decoration: none;
-    font-size: 14px;
-    top: 15px;
+nav {
+    position: absolute;
+    top: 35px;
+    display: flex;
+    gap: 20px;
 }
 
-/* LOGIN/REGISTER CLASSES */
+nav a {
+    text-decoration: none;
+    font-size: 14px;
+    padding: 15px;
 
+    color: #00ffff;
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+}
+
+
+
+
+/* LOGIN/REGISTER CLASSES */
+.login-box {
+    position: relative;
+    background: transparent !important; 
+    border: 5px solid #00ffff;
+
+    box-shadow:
+        0 0 2px #00ffff,
+        0 0 4px #00ffff,
+        0 0 8px #00ffff,
+        0 0 12px #0088ff;
+
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+    height: 60%;
+    width: 50%;            
+    padding: 20px 30px;        
+    margin: auto;         
+    text-align: center;
+} 
+
+.login-box::before,
+.login-box::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+}
+
+.login-box h2 {
+    color: #ffffff;
+    margin-bottom: 35px;
+    letter-spacing: 3px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 14px;
+    margin: 15px 0;
+    box-sizing: border-box;
+
+    background-color: transparent !important;
+    border: 1px solid #00ccff;
+    color: #ffffff;
+
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    outline: none;
+    box-shadow: none;
+}
+
+.login-box input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
+
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.login-box button:hover {
+    background: #00ccff;
+    color: black;
+}
+
+.login-box button:active {
+    transform: scale(0.97);
+}
+
+.link {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+/* About us styling */
+.text-box {
+    position: relative;
+    background: transparent !important;
+    border: 5px solid #00ffff;
+
+    box-shadow:
+        0 0 2px #00ffff,
+        0 0 4px #00ffff,
+        0 0 8px #00ffff,
+        0 0 12px #0088ff;
+
+    color: #ffffff;
+
+    padding: 30px;
+    margin: auto;
+    text-align: center;
+
+    max-width: 800px;  
+    width: 90%;
+}
+
+.team-image {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+
+    image-rendering: pixelated; 
+}
 
 /* PROFILE CLASSES */
 
 
 /* MESSAGING CLASSES */
+.matches-container {
+    display: grid;
+    grid-template-columns: 250px 1fr; /* sidebar + chat */
+    height: 75vh;
+    width: 90%;
+    max-width: 1100px;
+    color: #ffffff;
+    border: 5px solid #00ffff;
+    box-shadow: 0 0 12px #00ffff;
+}
 
+.matches-sidebar {
+    padding:20px;
+    border-right: 3px solid #00ffff;
+    overflow-y: auto; /* 🔥 scrollbar */
+}
+
+.match-user {
+    padding: 20px;
+    border-bottom: 2px solid #00ffff;
+    cursor: pointer;
+}
+
+.match-user:hover {
+    background: rgba(0,255,255,0.1);
+}
+
+.chat-area {
+    display: grid;
+    grid-template-rows: 80px 1fr 70px; /* header, messages, input */
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px;
+    border-bottom: 3px solid #00ffff;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    image-rendering: pixelated;
+}
+
+.username {
+    flex-grow: 1;
+    margin-left: 15px;
+}
+
+.header-buttons button {
+    margin-left: 10px;
+}
+
+.chat-messages {
+    padding: 15px;
+    overflow-y: auto; /* 🔥 scrollbar */
+}
+
+.chat-input {
+    display: flex;
+    border-top: 3px solid #00ffff;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00ffff;
+    box-shadow: 0 0 5px #00ffff;
+}
 
 /* MATCHMAKE CLASSES*/
+
