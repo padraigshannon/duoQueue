@@ -134,13 +134,13 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
 
 <body>
 
-<nav>
-    <a href="home.php">Home</a>
-    <a href="profile.php">Profile</a>
-    <a href="matchmake.php">Matchmake</a>
-    <a href="matches.php">My Duo's</a>
-    <a href="aboutus.php">About Us</a>
-</nav>
+    <nav>
+        <a href="home.php">Home</a>
+        <a href="profilepage.php">Profile</a>
+        <a href="matchmake.php">Matchmake</a>
+        <a href="matches.php">My Duo's</a>
+        <a href="aboutus.php">About Us</a>
+    </nav>
 
 <div class="content">
 
