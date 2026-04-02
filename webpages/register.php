@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="password" name="password" placeholder="Password" required>
             <input type="password" name="repeat_password" placeholder="Repeat Password" required>
             <button type="submit">Create my account</button>
-            <a href="login.php" class="register-link">Already have an Account?</a>
+            <a href="login.php" class="link">Already have an Account?</a>
         </form>
     </div>
 
