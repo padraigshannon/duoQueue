@@ -51,8 +51,6 @@ $profile = $result->fetch_assoc();
 
 $stmt->close();
 
-$games = [];
-
 $sql_games = "SELECT ag.game_name
               FROM users_games ug
               JOIN available_games ag ON ug.game_id = ag.game_id
@@ -87,7 +85,31 @@ while ($row = $result_pictures->fetch_assoc()) {
     $pictures[] = $row['photo'];
 }
 $stmt_pictures->close();
+
+$sql_platforms = "SELECT ap.platform_name, up.platform_id
+                 FROM user_platforms up
+                 JOIN available_platforms ap ON up.platform_id = ap.platform_id
+                 WHERE up.user_id = ?";
+
+
+                 
+$stmt_platforms = $conn->prepare($sql_platforms);
+
+if (!$stmt_platforms) {
+    die("Prepare failed (platforms): " . $conn->error);
+}
+
+$stmt_platforms->bind_param("i", $user_id);
+$stmt_platforms->execute();
+$result_platforms = $stmt_platforms->get_result();
+$platforms = [];
+while ($row = $result_platforms->fetch_assoc()) {
+    $platforms[] = $row['platform_name'];
+}
+$stmt_platforms->close();
 $conn->close();
+
+
 
 $age = "";
 if (!empty($profile['date_of_birth'])) {
@@ -111,103 +133,142 @@ if (!empty($profile['date_of_birth'])) {
         <nav>
             <a href="home.php">Home</a>
             <a href="profilepage.php">Profile</a>
+            <a href="profile.php">Edit Profile</a>
             <a href="matchmake.php">Matchmake</a>
             <a href="matches.php">My Duo's</a>
             <a href="aboutus.php">About Us</a>
         </nav>
 
         <div class="content container py-4">
-    <div class="row g-4">
+            <div class="row g-4">
 
-        <!-- Left column -->
-        <div class="col-lg-4">
+                <div class="col-lg-4">
 
-            <!-- Profile photo card -->
-            <div class="card mb-4">
-                <div class="card-body text-center">
-                    <?php if (!empty($profile['profile_photo'])): ?>
-                        <img src="<?php echo htmlspecialchars($profile['profile_photo']); ?>"
-                             alt="Profile Photo"
-                             class="img-fluid rounded-circle mb-3">
-                    <?php else: ?>
-                        <img src="assets/296fe121-5dfa-43f4-98b5-db50019738a7.jpg"
-                             alt="Default Profile Photo"
-                             class="img-fluid rounded-circle mb-3">
-                    <?php endif; ?>
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <?php if (!empty($profile['profile_photo'])): ?>
+                                <img src="<?php echo htmlspecialchars($profile['profile_photo']); ?>"
+                                    alt="Profile Photo"
+                                    class="img-fluid rounded-circle mb-3">
+                            <?php else: ?>
+                                <img src="assets/296fe121-5dfa-43f4-98b5-db50019738a7.jpg"
+                                    alt="Default Profile Photo"
+                                    class="img-fluid rounded-circle mb-3">
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                <?php echo htmlspecialchars($profile['first_name'] . ' ' . $profile['last_name']); ?>
+                            </h2>
+
+                            <p class="mb-1">
+                                <strong>Age:</strong>
+                                <?php echo htmlspecialchars($age !== "" ? $age : "Not specified"); ?>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Location:</strong>
+                                <?php echo htmlspecialchars($profile['location'] ?? "Not specified"); ?>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Gender:</strong>
+                                <?php echo htmlspecialchars($profile['gender'] ?? "Not specified"); ?>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Seeking:</strong>
+                                <?php echo htmlspecialchars($profile['seeking'] ?? "Not specified"); ?>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Smoker:</strong>
+                                <?php echo isset($profile['smoker']) ? ($profile['smoker'] ? "Yes" : "No") : "Not specified"; ?>
+                            </p>
+                            <p class="mb-1">
+                                <strong>Drinker:</strong>
+                                <?php echo isset($profile['drinker']) ? ($profile['drinker'] ? "Yes" : "No") : "Not specified"; ?>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-lg-8">
+
+                    <!-- Bio card -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title">About Me</h3>
+                            <p>
+                                <?php echo nl2br(htmlspecialchars($profile['about_me'] ?? "No bio provided.")); ?>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title">Favorite Games</h3>
+                            <?php if (!empty($games)): ?>
+                                <ul class="list-group list-group-flush">
+                                    <?php foreach ($games as $game): ?>
+                                        <li class="list-group-item">
+                                            <?php echo htmlspecialchars($game); ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php else: ?>
+                                <p>No games listed.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
-            <!-- Basic info card -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h2 class="card-title">
-                        <?php echo htmlspecialchars($profile['first_name'] . ' ' . $profile['last_name']); ?>
-                    </h2>
-
-                    <p class="mb-1">
-                        <strong>Age:</strong>
-                        <?php echo htmlspecialchars($age !== "" ? $age : "Not specified"); ?>
-                    </p>
-                    <p class="mb-1">
-                        <strong>Location:</strong>
-                        <?php echo htmlspecialchars($profile['location'] ?? "Not specified"); ?>
-                    </p>
-                    <p class="mb-1">
-                        <strong>Gender:</strong>
-                        <?php echo htmlspecialchars($profile['gender'] ?? "Not specified"); ?>
-                    </p>
-                    <p class="mb-1">
-                        <strong>Seeking:</strong>
-                        <?php echo htmlspecialchars($profile['seeking'] ?? "Not specified"); ?>
-                    </p>
-                    <p class="mb-1">
-                        <strong>Smoker:</strong>
-                        <?php echo isset($profile['smoker']) ? ($profile['smoker'] ? "Yes" : "No") : "Not specified"; ?>
-                    </p>
-                    <p class="mb-1">
-                        <strong>Drinker:</strong>
-                        <?php echo isset($profile['drinker']) ? ($profile['drinker'] ? "Yes" : "No") : "Not specified"; ?>
-                    </p>
+            <div class="row g-4 mt-1">
+                <div class="col-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title">Photo Gallery</h3>
+                            <?php if (!empty($pictures)): ?>
+                                <div class="row g-3 mb-3">
+                                    <?php foreach (array_slice($pictures, 0, 2)as $picture): ?>
+                                        <div class="col-6">
+                                            <img src="<php echo htmlspecialchars($picture)"; ?>
+                                                alt="User Photo"
+                                                class="img-fluid rounded">
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <?php if (count($pictures) > 2): ?>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#photoGalleryModal">View All Photos</button>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <p>No photos uploaded.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
+                <div class="col-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="card-title">platforms</h3>
+                            <?php if (!empty($platforms)): ?>
+                                <ul class="list-group list-group-flush">
+                                    <?php foreach ($patforms as $platform): ?>
+                                        <li class="list-group-item">
+                                            <strong>?php echo htmlspecialchars($platform['platform_name']); ?></strong>
+                                            <?php if (!empty($platform['platform_id'])): ?>
+                                                - <?php echo htmlspecialchars($platform['platform_id']); ?>
+                                            <?php endif; ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php else: ?>
+                                <p>No platforms listed.</p>
+                            <?php endif; ?>
             </div>
-
         </div>
-
-        <!-- Right column -->
-        <div class="col-lg-8">
-
-            <!-- Bio card -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3 class="card-title">About Me</h3>
-                    <p>
-                        <?php echo nl2br(htmlspecialchars($profile['about_me'] ?? "No bio provided.")); ?>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Favorite games card -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3 class="card-title">Favorite Games</h3>
-                    <?php if (!empty($games)): ?>
-                        <ul class="list-group list-group-flush">
-                            <?php foreach ($games as $game): ?>
-                                <li class="list-group-item">
-                                    <?php echo htmlspecialchars($game); ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <p>No favorite games listed.</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-        </div>
-
     </div>
-</div>
 </body>
 
 </html>
