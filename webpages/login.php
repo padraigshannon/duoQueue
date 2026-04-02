@@ -6,6 +6,7 @@ $db   = 'if0_41396749_duoqueue_db';
 $user = 'if0_41396749';
 $pass = 'VQtMPg6j4SF2';
 
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -25,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user) {
         $_SESSION['user_id'] = $user['user_id'];
-        header("Location: matchmake.html");
+        header("Location: home.php");
         exit;
     } else {
         $error = "Invalid email or password.";
