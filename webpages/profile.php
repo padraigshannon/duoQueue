@@ -54,18 +54,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Profile Setup</title>
 
     <link rel="stylesheet" href="../assets/arcade.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         /* Page-specific styles (keep layout) */
         .main-container {
             position: relative;
             width: 90%;
-            max-width: 1100px;
-            height: 80vh;
+            width: 1000px;
+            height: 100%;
             display: flex;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            border-radius: 15px;
+            background: transparent;
+            border: 5px solid #00ffff;
+            box-shadow: 0 0 12px #00ffff;
+            backdrop-filter: blur(15px);  
             overflow: hidden;
         }
 
@@ -84,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .preview img {
             width: 150px;
             height: 150px;
-            border-radius: 50%;
+            border-radius: 25%;
             object-fit: cover;
             margin-bottom: 20px;
             border: 3px solid #00ffff;
@@ -92,18 +93,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .form-section {
             flex: 1;
-            padding: 40px;
-            color: white;
+            padding: 25px;
+            color: #ffffff;
         }
 
-        .form-group {
+        .form-group { 
             margin-bottom: 15px;
+            padding: 20px;
         }
 
         textarea {
             resize: none;
             height: 80px;
+            width: 100%;
+            padding: 14px;
+            margin: 15px 0;
+            box-sizing: border-box;
+
+            background-color: transparent !important;
+            border: 1px solid #00ccff;
+            color: #ffffff;
+
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            outline: none;
+            box-shadow: none;
         }
+
     </style>
 
 </head>
