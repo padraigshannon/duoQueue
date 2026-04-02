@@ -19,8 +19,13 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 $sql = "
-    SELECT * FROM matches 
-    WHERE user1_id = ? OR user2_id = ?
+    SELECT m.*,
+       u1.first_name AS user1_first, u1.last_name AS user1_last,
+       u2.first_name AS user2_first, u2.last_name AS user2_last
+    FROM matches m
+    JOIN users u1 ON m.user1_id = u1.user_id
+    JOIN users u2 ON m.user2_id = u2.user_id
+    WHERE m.user1_id = ? OR m.user2_id = ?
 ";
 
 $stmt = $pdo->prepare($sql);
@@ -98,12 +103,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <!-- Messaging Sidebar (Matched User Display) -->
             <div class="matches-sidebar">
                 <?php foreach ($matches as $match):
-                    $other_user_id = ($match['user1_id'] == $user_id) 
-                        ? $match['user2_id'] 
-                        : $match['user1_id'];
+                    $other_user_name = ($match['user1_id'] == $user_id) 
+                        ? $match['user2_first'] . ' ' . $match['user2_last']
+                        : $match['user1_first'] . ' ' . $match['user1_last'];
                 ?>
                     <a href="matches.php?match_id=<?= $match['match_id'] ?>" class="match-user">
-                        User <?=$other_user_id ?>
+                        <?=$other_user_name ?>
                     </a>
                 <?php endforeach; ?>
             </div>
