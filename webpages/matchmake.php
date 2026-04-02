@@ -177,12 +177,12 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
         <div class="match-actions">
             <form action="like.php" method="POST">
                 <input type="hidden" name="liked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" class="like-button">👍 Like</button>
+                <button type="submit" class="like-button"> Like</button>
             </form>
 
             <form action="dislike.php" method="POST">
                 <input type="hidden" name="disliked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" class="dislike-button">👎 Dislike</button>
+                <button type="submit" class="dislike-button"> Dislike</button>
             </form>
         </div>
 
