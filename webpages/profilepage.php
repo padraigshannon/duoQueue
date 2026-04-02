@@ -86,13 +86,11 @@ while ($row = $result_pictures->fetch_assoc()) {
 }
 $stmt_pictures->close();
 
-$sql_platforms = "SELECT ap.platform_name, up.platform_id
-                 FROM user_platforms up
-                 JOIN available_platforms ap ON up.platform_id = ap.platform_id
-                 WHERE up.user_id = ?";
+$sql_platforms = "SELECT ap.platform_name, up.platform_username
+                  FROM user_platforms up
+                  JOIN available_platforms ap ON up.platform_id = ap.platform_id
+                  WHERE up.user_id = ?";
 
-
-                 
 $stmt_platforms = $conn->prepare($sql_platforms);
 
 if (!$stmt_platforms) {
@@ -102,9 +100,10 @@ if (!$stmt_platforms) {
 $stmt_platforms->bind_param("i", $user_id);
 $stmt_platforms->execute();
 $result_platforms = $stmt_platforms->get_result();
+
 $platforms = [];
 while ($row = $result_platforms->fetch_assoc()) {
-    $platforms[] = $row['platform_name'];
+    $platforms[] = $row;
 }
 $stmt_platforms->close();
 $conn->close();
@@ -139,7 +138,7 @@ if (!empty($profile['date_of_birth'])) {
             <a href="aboutus.php">About Us</a>
         </nav>
 
-        <div class="content container py-4">
+        <div class="container py-4">
             <div class="row g-4">
 
                 <div class="col-lg-4">
@@ -149,7 +148,7 @@ if (!empty($profile['date_of_birth'])) {
                             <?php if (!empty($profile['profile_photo'])): ?>
                                 <img src="<?php echo htmlspecialchars($profile['profile_photo']); ?>"
                                     alt="Profile Photo"
-                                    class="img-fluid rounded-circle mb-3">
+                                    class="img-fluid mb-3">
                             <?php else: ?>
                                 <img src="assets/296fe121-5dfa-43f4-98b5-db50019738a7.jpg"
                                     alt="Default Profile Photo"
@@ -225,50 +224,57 @@ if (!empty($profile['date_of_birth'])) {
                 </div>
             </div>
             <div class="row g-4 mt-1">
-                <div class="col-6">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h3 class="card-title">Photo Gallery</h3>
-                            <?php if (!empty($pictures)): ?>
-                                <div class="row g-3 mb-3">
-                                    <?php foreach (array_slice($pictures, 0, 2)as $picture): ?>
-                                        <div class="col-6">
-                                            <img src="<php echo htmlspecialchars($picture)"; ?>
-                                                alt="User Photo"
-                                                class="img-fluid rounded">
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                                <?php if (count($pictures) > 2): ?>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#photoGalleryModal">View All Photos</button>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <p>No photos uploaded.</p>
-                            <?php endif; ?>
-                        </div>
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title">Photo Gallery</h3>
+
+                <?php if (!empty($pictures)): ?>
+                    <div class="row g-3 mb-3">
+                        <?php foreach (array_slice($pictures, 0, 2) as $picture): ?>
+                            <div class="col-6">
+                                <img src="<?php echo htmlspecialchars($picture); ?>"
+                                     alt="User Photo"
+                                     class="img-fluid rounded">
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h3 class="card-title">platforms</h3>
-                            <?php if (!empty($platforms)): ?>
-                                <ul class="list-group list-group-flush">
-                                    <?php foreach ($patforms as $platform): ?>
-                                        <li class="list-group-item">
-                                            <strong>?php echo htmlspecialchars($platform['platform_name']); ?></strong>
-                                            <?php if (!empty($platform['platform_id'])): ?>
-                                                - <?php echo htmlspecialchars($platform['platform_id']); ?>
-                                            <?php endif; ?>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            <?php else: ?>
-                                <p>No platforms listed.</p>
-                            <?php endif; ?>
+
+                    <?php if (count($pictures) > 2): ?>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#photoGalleryModal">
+                            View All Photos
+                        </button>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p>No photos uploaded.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
+
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title">Platforms</h3>
+
+                <?php if (!empty($platforms)): ?>
+                    <ul class="list-group list-group-flush">
+                        <?php foreach ($platforms as $platform): ?>
+                            <li class="list-group-item">
+                                <strong><?php echo htmlspecialchars($platform['platform_name']); ?></strong>
+                                <?php if (!empty($platform['platform_username'])): ?>
+                                    - <?php echo htmlspecialchars($platform['platform_username']); ?>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>No platforms listed.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>
