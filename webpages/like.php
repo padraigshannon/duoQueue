@@ -2,10 +2,10 @@
 session_start();
 
 // DB connection
-$host = 'localhost';
-$db   = 'cs4116';
-$user = 'root';
-$pass = '';
+$host = 'sql113.infinityfree.com';
+$db   = 'if0_41396749_duoqueue_db';
+$user = 'if0_41396749';
+$pass = 'VQtMPg6j4SF2';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -15,10 +15,10 @@ try {
 }
 
 // Check if user is logged in
-//if (!isset($_SESSION["user_id"])) {
-   // header("Location: login.php");
-    //exit();
-//}
+if (!isset($_SESSION["user_id"])) {
+   header("Location: login.php");
+    exit();
+}
 
 $currentUserId = $_SESSION["user_id"];
 

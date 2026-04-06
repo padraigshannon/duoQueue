@@ -5,10 +5,10 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // DB connection
-$host = 'localhost';
-$db   = 'cs4116';
-$user = 'root';
-$pass = '';
+$host = 'sql113.infinityfree.com';
+$db   = 'if0_41396749_duoqueue_db';
+$user = 'if0_41396749';
+$pass = 'VQtMPg6j4SF2';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -19,27 +19,26 @@ try {
 
 // Check login
 if (!isset($_SESSION['user_id'])) {
-   header("Location: login.php");
-   exit();
+    header("Location: login.php");
+    exit();
 }
 
 $userId = $_SESSION['user_id'];
 
-// CALL MATCHMAKING STORED PROCEDURE
+// Call stored procedure to get matchmaking candidates
 $stmt = $pdo->prepare("CALL GetMatchmakingCandidates(:uid, 1)");
 $stmt->execute(['uid' => $userId]);
 
 $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// IMPORTANT FIX
+
 $stmt->closeCursor();
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>DuoQueue - Matchmake</title>
+    <title>Matchmake</title>
 
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -62,133 +61,96 @@ $stmt->closeCursor();
             border: 2px solid #0ff;
             border-radius: 10px;
             text-align: center;
-
-            overflow: hidden;
         }
 
-        .match-card label {
-            display: block;
-            margin-top: 10px;
-            text-align: left;
-        }
-
-        .match-card input,
-        .match-card textarea {
+        input, textarea {
             width: 100%;
-            padding: 8px;
             margin-top: 5px;
-            background-color: #222;
-            color: #fff;
+            margin-bottom: 10px;
+            background: #222;
+            color: white;
             border: 1px solid #0ff;
-            border-radius: 5px;
         }
 
-        .match-card textarea {
-            min-height: 100px;
+        textarea {
+            height: 80px;
             resize: none;
         }
 
-        .profile-photo {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
         .match-actions {
-            margin-top: 15px;
             display: flex;
             justify-content: space-between;
         }
 
         .like-button {
-            background-color: #0f0;
-            border: none;
+            background: green;
             padding: 10px;
+            border: none;
             cursor: pointer;
         }
 
         .dislike-button {
-            background-color: #f00;
-            border: none;
+            background: red;
             padding: 10px;
+            border: none;
             cursor: pointer;
         }
 
         .match-notification {
-            background-color: #222;
-            border: 2px solid #0f0;
-            padding: 15px;
+            border: 2px solid lime;
+            padding: 10px;
             margin-bottom: 20px;
-            text-align: center;
         }
     </style>
 </head>
 
 <body>
 
-    <nav>
-        <a href="home.php">Home</a>
-        <a href="profilepage.php">Profile</a>
-        <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duo's</a>
-        <a href="aboutus.php">About Us</a>
-    </nav>
-
 <div class="content">
 
-<?php if(isset($_GET['matched']) && $_GET['matched'] == 'true'): ?>
+<?php if(isset($_GET['matched'])): ?>
     <div class="match-notification">
-        <h2>🎉 It's a Match!</h2>
-        <p>You and <?php echo htmlspecialchars($_GET['name']); ?> have liked each other!</p>
-        <a href="matches.php">Go to My Matches</a>
+        <h3>It's a Match with <?php echo htmlspecialchars($_GET['name']); ?>!</h3>
     </div>
 <?php endif; ?>
 
 <?php if ($potentialMatch): ?>
 
-    <div class="match-card">
+<div class="match-card">
 
-        <h2>Player Profile</h2>
+    <h2>Match Found</h2>
 
-        <!-- OPTIONAL: SHOW SCORE -->
-        <p>Match Score: <?php echo $potentialMatch['match_score']; ?></p>
+    <p>Score: <?php echo $potentialMatch['match_score']; ?></p>
 
-        <label>First Name</label>
-        <input type="text" value="<?php echo htmlspecialchars($potentialMatch['first_name']); ?>" readonly>
+    <input type="text" value="<?php echo htmlspecialchars($potentialMatch['first_name']); ?>" readonly>
+    <input type="text" value="<?php echo htmlspecialchars($potentialMatch['location']); ?>" readonly>
 
-        <label>Last Name</label>
-        <input type="text" value="<?php echo htmlspecialchars($potentialMatch['last_name']); ?>" readonly>
+    <textarea readonly><?php echo htmlspecialchars($potentialMatch['about_me']); ?></textarea>
 
-        <label>Location</label>
-        <input type="text" value="<?php echo htmlspecialchars($potentialMatch['location']); ?>" readonly>
+    <div class="match-actions">
 
-        <label>About Me</label>
-        <textarea readonly><?php echo htmlspecialchars($potentialMatch['about_me'] ?? 'No bio provided'); ?></textarea>
+        <!-- LIKE -->
+        <form action="like.php" method="POST">
+            <input type="hidden" name="liked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
+            <button class="like-button">👍 Like</button>
+        </form>
 
-        <img src="<?php echo htmlspecialchars($potentialMatch['profile_photo']); ?>" 
-             alt="Profile Photo" 
-             class="profile-photo">
-
-        <div class="match-actions">
-            <form action="like_action.php" method="POST">
-                <input type="hidden" name="target_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" name="action" value="like" class="like-button">👍 Like</button>
-            </form>
-
-            <form action="like_action.php" method="POST">
-                <input type="hidden" name="target_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" name="action" value="dislike" class="dislike-button">👎 Dislike</button>
-            </form>
-        </div>
+        <!-- DISLIKE -->
+        <form action="dislike.php" method="POST">
+            <input type="hidden" name="disliked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
+            <button class="dislike-button">👎 Dislike</button>
+        </form>
 
     </div>
+
+</div>
 
 <?php else: ?>
-    <div class="match-card">
-        <h2>No More Potential Duo Partners</h2>
-        <p>You've seen all available profiles. Check back later!</p>
-    </div>
+
+<div class="match-card">
+    <h2>No Matches Available</h2>
+</div>
+
 <?php endif; ?>
 
 </div>
