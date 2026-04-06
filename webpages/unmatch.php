@@ -1,16 +1,9 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['match_id'])) {
-    $host = 'localhost';
-    $db   = 'duoqueue_db';
-    $user = 'root';
-    $pass = '';
+$host = 'sql113.infinityfree.com';
+$db   = 'if0_41396749_duoqueue_db';
+$user = 'if0_41396749';
+$pass = 'VQtMPg6j4SF2';
 
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -18,6 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['match_id'])) {
     } catch (PDOException $e) {
         die("Could not connect to the database.");
     }
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['match_id'])) {
 
     $user_id  = $_SESSION['user_id'];
     $match_id = $_POST['match_id'];
