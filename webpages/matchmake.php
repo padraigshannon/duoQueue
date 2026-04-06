@@ -1,11 +1,14 @@
 <?php
 session_start();
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // DB connection
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'cs4116';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -15,52 +18,45 @@ try {
 }
 
 // Check login
-if (!isset($_SESSION["user_id"])) {
-    header("Location: login.php");
-    exit();
+if (!isset($_SESSION['user_id'])) {
+   header("Location: login.php");
+   exit();
 }
 
-$userId = $_SESSION["user_id"];
+$userId = $_SESSION['user_id'];
 
-// Get one potential match
-$stmt = $pdo->prepare("
-    SELECT u.user_id, u.first_name, u.last_name,
-           up.profile_photo, up.about_me, up.location
-    FROM users u
-    JOIN user_profiles up ON u.user_id = up.user_id
-    WHERE u.user_id != :me
-      AND u.is_banned = 0
-      AND u.user_id NOT IN (
-            SELECT liked_user_id FROM likes WHERE user_id = :me
-      )
-      AND u.user_id NOT IN (
-            SELECT disliked_user_id FROM dislikes WHERE user_id = :me
-      )
-      AND u.user_id NOT IN (
-            SELECT user2_id FROM matches WHERE user1_id = :me
-            UNION
-            SELECT user1_id FROM matches WHERE user2_id = :me
-      )
-    LIMIT 1
-");
+// CALL MATCHMAKING STORED PROCEDURE
+$stmt = $pdo->prepare("CALL GetMatchmakingCandidates(:uid, 1)");
+$stmt->execute(['uid' => $userId]);
 
-$stmt->execute(['me' => $userId]);
 $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// IMPORTANT FIX
+$stmt->closeCursor();
 ?>
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>DuoQueue</title>
+    <title>DuoQueue - Matchmake</title>
+
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
-        /* MATCH CARD (REGISTER STYLE) */
+        body {
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .match-card {
             width: 400px;
-            margin: auto;
             padding: 20px;
             background-color: #111;
             border: 2px solid #0ff;
@@ -85,9 +81,6 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
             color: #fff;
             border: 1px solid #0ff;
             border-radius: 5px;
-
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }
 
         .match-card textarea {
@@ -158,6 +151,9 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
 
         <h2>Player Profile</h2>
 
+        <!-- OPTIONAL: SHOW SCORE -->
+        <p>Match Score: <?php echo $potentialMatch['match_score']; ?></p>
+
         <label>First Name</label>
         <input type="text" value="<?php echo htmlspecialchars($potentialMatch['first_name']); ?>" readonly>
 
@@ -175,21 +171,21 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
              class="profile-photo">
 
         <div class="match-actions">
-            <form action="like.php" method="POST">
-                <input type="hidden" name="liked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" class="like-button"> Like</button>
+            <form action="like_action.php" method="POST">
+                <input type="hidden" name="target_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
+                <button type="submit" name="action" value="like" class="like-button">👍 Like</button>
             </form>
 
-            <form action="dislike.php" method="POST">
-                <input type="hidden" name="disliked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" class="dislike-button"> Dislike</button>
+            <form action="like_action.php" method="POST">
+                <input type="hidden" name="target_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
+                <button type="submit" name="action" value="dislike" class="dislike-button">👎 Dislike</button>
             </form>
         </div>
 
     </div>
 
 <?php else: ?>
-    <div class="no-matches">
+    <div class="match-card">
         <h2>No More Potential Duo Partners</h2>
         <p>You've seen all available profiles. Check back later!</p>
     </div>
