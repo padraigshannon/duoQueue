@@ -1,12 +1,9 @@
 <?php
 session_start();
-
 $host = 'localhost';
 $db   = 'duoqueue_db';
 $user = 'root';
 $pass = '';
-
-
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -26,14 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['user_id'];
-        header("Location: home.php");
+        $_SESSION['is_admin'] = $user['is_admin'];
+
+        if ($user['is_admin']) {
+            header("Location: adminHome.php");
+        } else {
+            header("Location: home.php");
+        }
         exit;
     } else {
         $error = "Invalid email or password.";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,17 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="login-box">
+        <h2>Login</h2>
 
-        <div class="login-box">
-            <h2>Login</h2>
+        <?php if (!empty($error)): ?>
+            <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
 
-            
-            <form action="login.php" method="POST">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Login</button>
-                <a href="register.php" class="link">Sign up</a>
-            </form>
-        </div>
+        <form action="login.php" method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+            <a href="register.php" class="link">Sign up</a>
+        </form>
+    </div>
 </body>
 </html>
