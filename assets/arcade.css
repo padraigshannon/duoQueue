@@ -67,7 +67,7 @@ h1, h3 { /* Header Colors */
 
 nav {
     position: fixed;
-    top: 8vh;
+    top: 10vh;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -90,8 +90,6 @@ nav a {
         0 0 2px #00ffff,
         0 0 4px #0088ff;
 }
-
-
 
 
 /* LOGIN/REGISTER CLASSES */
@@ -207,11 +205,11 @@ nav a {
     color: #ffffff;
 
     padding: 20px;
-    margin: auto;
+    margin: 3vh auto 0 auto;
     text-align: center;
 
-    max-width: 55vw;
-    max-height: 70vh;
+    max-width: 50vw;
+    max-height: 65vh;
     overflow-y: auto;
     width: 85%;
     font-size: clamp(8px, 1vw, 12px);
@@ -234,11 +232,11 @@ nav a {
     margin: auto;
     text-align: center;
 
-    max-width: 50vw;
-    max-height: 65vh;
+    max-width: 48vw;
+    max-height: 58vh;
     overflow-y: auto;
     width: 85%;
-    font-size: clamp(8px, 1vw, 12px);
+    font-size: clamp(8px, 1vw, 11px);
 }
 
 .team-image {
@@ -256,7 +254,7 @@ nav a {
 .matches-container {
     display: grid;
     grid-template-columns: 180px 1fr;
-    height: 68vh;
+    height: 70vh;
     width: 55vw;
     margin-top: 1vh;
     color: #ffffff;
@@ -286,7 +284,8 @@ nav a {
 
 .chat-area {
     display: grid;
-    grid-template-rows: 80px 1fr 70px; 
+    grid-template-rows: 60px 1fr 50px;
+    overflow: hidden;
 }
 
 .chat-header {
@@ -399,4 +398,75 @@ nav a {
 }
 
 /* MATCHMAKE CLASSES*/
+.match-card {
+    width: 400px;
+    margin: auto;
+    padding: 20px;
+    background-color: transparent;
+    border: 2px solid #0ff;
+    color: #ffffff;
+    border-radius: 10px;
+    text-align: center;
 
+    overflow: hidden;
+}
+
+.match-card label {
+    display: block;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.match-card input,
+.match-card textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #0ff;
+    border-radius: 5px;
+
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.match-card textarea {
+    min-height: 100px;
+    resize: none;
+}
+
+.profile-photo {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.match-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.like-button {
+    background-color: #0f0;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dislike-button {
+    background-color: #f00;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.match-notification {
+    background-color: transparent;
+    border: 2px solid #0f0;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}
