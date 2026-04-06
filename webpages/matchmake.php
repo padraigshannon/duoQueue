@@ -4,9 +4,8 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// DB connection
 $host = 'localhost';
-$db   = 'cs4116';
+$db   = 'duoqueue_db';
 $user = 'root';
 $pass = '';
 
@@ -17,14 +16,13 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-// Check login
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
 $userId = $_SESSION['user_id'];
-$limit = 1; // Get one potential match at a time
+$limit = 1; 
 
 $sql = '
  SELECT
@@ -92,7 +90,6 @@ $sql = '
     ORDER BY match_score DESC
     LIMIT :limit';
 
-// Call stored procedure to get matchmaking candidates
 $stmt = $pdo->prepare("$sql");
 $stmt->bindValue(':uid_seeker', $userId, PDO::PARAM_INT);
 $stmt->bindValue(':uid_games', $userId, PDO::PARAM_INT);
