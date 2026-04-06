@@ -1,9 +1,12 @@
 <?php
 session_start();
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // DB connection
 $host = 'localhost';
-$db   = 'duoqueue_db';
+$db   = 'cs4116';
 $user = 'root';
 $pass = '';
 
@@ -15,44 +18,28 @@ try {
 }
 
 // Check login
-if (!isset($_SESSION["user_id"])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$userId = $_SESSION["user_id"];
+$userId = $_SESSION['user_id'];
 
-// Get one potential match
-$stmt = $pdo->prepare("
-    SELECT u.user_id, u.first_name, u.last_name,
-           up.profile_photo, up.about_me, up.location
-    FROM users u
-    JOIN user_profiles up ON u.user_id = up.user_id
-    WHERE u.user_id != :me
-      AND u.is_banned = 0
-      AND u.user_id NOT IN (
-            SELECT liked_user_id FROM likes WHERE user_id = :me
-      )
-      AND u.user_id NOT IN (
-            SELECT disliked_user_id FROM dislikes WHERE user_id = :me
-      )
-      AND u.user_id NOT IN (
-            SELECT user2_id FROM matches WHERE user1_id = :me
-            UNION
-            SELECT user1_id FROM matches WHERE user2_id = :me
-      )
-    LIMIT 1
-");
+// Call stored procedure to get matchmaking candidates
+$stmt = $pdo->prepare("CALL GetMatchmakingCandidates(:uid, 1)");
+$stmt->execute(['uid' => $userId]);
 
-$stmt->execute(['me' => $userId]);
 $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+$stmt->closeCursor();
 ?>
 
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>DuoQueue</title>
+    <title>Matchmake</title>
+
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
@@ -67,60 +54,53 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
         <a href="matchmake.php">Matchmake</a>
         <a href="matches.php">My Duo's</a>
         <a href="aboutus.php">About Us</a>
-        <a href="logout.php">Logout</a>
     </nav>
 
 <div class="content">
 
-<?php if(isset($_GET['matched']) && $_GET['matched'] == 'true'): ?>
+<?php if(isset($_GET['matched'])): ?>
     <div class="match-notification">
-        <h2>🎉 It's a Match!</h2>
-        <p>You and <?php echo htmlspecialchars($_GET['name']); ?> have liked each other!</p>
-        <a href="matches.php">Go to My Matches</a>
+        <h3>It's a Match with <?php echo htmlspecialchars($_GET['name']); ?>!</h3>
     </div>
 <?php endif; ?>
 
 <?php if ($potentialMatch): ?>
 
-    <div class="match-card">
+<div class="match-card">
 
-        <h2>Player Profile</h2>
+    <h2>Match Found</h2>
 
-        <label>First Name</label>
-        <input type="text" value="<?php echo htmlspecialchars($potentialMatch['first_name']); ?>" readonly>
+    <p>Score: <?php echo $potentialMatch['match_score']; ?></p>
 
-        <label>Last Name</label>
-        <input type="text" value="<?php echo htmlspecialchars($potentialMatch['last_name']); ?>" readonly>
+    <input type="text" value="<?php echo htmlspecialchars($potentialMatch['first_name']); ?>" readonly>
+    <input type="text" value="<?php echo htmlspecialchars($potentialMatch['location']); ?>" readonly>
 
-        <label>Location</label>
-        <input type="text" value="<?php echo htmlspecialchars($potentialMatch['location']); ?>" readonly>
+    <textarea readonly><?php echo htmlspecialchars($potentialMatch['about_me']); ?></textarea>
 
-        <label>About Me</label>
-        <textarea readonly><?php echo htmlspecialchars($potentialMatch['about_me'] ?? 'No bio provided'); ?></textarea>
+    <div class="match-actions">
 
-        <img src="<?php echo htmlspecialchars($potentialMatch['profile_photo']); ?>" 
-             alt="Profile Photo" 
-             class="profile-photo">
+        <!-- LIKE -->
+        <form action="like.php" method="POST">
+            <input type="hidden" name="liked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
+            <button class="like-button">👍 Like</button>
+        </form>
 
-        <div class="match-actions">
-            <form action="like.php" method="POST">
-                <input type="hidden" name="liked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" class="like-button"> Like</button>
-            </form>
-
-            <form action="dislike.php" method="POST">
-                <input type="hidden" name="disliked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-                <button type="submit" class="dislike-button"> Dislike</button>
-            </form>
-        </div>
+        <!-- DISLIKE -->
+        <form action="dislike.php" method="POST">
+            <input type="hidden" name="disliked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
+            <button class="dislike-button">👎 Dislike</button>
+        </form>
 
     </div>
+
+</div>
 
 <?php else: ?>
-    <div class="no-matches">
-        <h2>No More Potential Duo Partners</h2>
-        <p>You've seen all available profiles. Check back later!</p>
-    </div>
+
+<div class="match-card">
+    <h2>No Matches Available</h2>
+</div>
+
 <?php endif; ?>
 
 </div>
