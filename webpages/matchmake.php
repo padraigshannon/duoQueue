@@ -119,65 +119,7 @@ $stmt->closeCursor();
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            font-family: 'Press Start 2P', cursive;
-        }
-
-        .content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .match-card {
-            width: 400px;
-            padding: 20px;
-            background-color: #111;
-            border: 2px solid #0ff;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        input, textarea {
-            width: 100%;
-            margin-top: 5px;
-            margin-bottom: 10px;
-            background: #222;
-            color: white;
-            border: 1px solid #0ff;
-        }
-
-        textarea {
-            height: 80px;
-            resize: none;
-        }
-
-        .match-actions {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .like-button {
-            background: green;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .dislike-button {
-            background: red;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .match-notification {
-            border: 2px solid lime;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
+    
 </head>
 
 <body>
