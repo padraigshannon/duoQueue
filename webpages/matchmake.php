@@ -2,10 +2,10 @@
 session_start();
 
 // DB connection
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -140,6 +140,7 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
         <a href="matchmake.php">Matchmake</a>
         <a href="matches.php">My Duo's</a>
         <a href="aboutus.php">About Us</a>
+        <a href="logout.php">Logout</a>
     </nav>
 
 <div class="content">

@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -54,6 +54,24 @@ if ($selected_match_id) {
     }
 }
 
+$other_user_id = null;
+$other_user_name = "MatchedUser";
+
+if ($selected_match_id) {
+    foreach ($matches as $m) {
+        if ($m['match_id'] == $selected_match_id) {
+            if ($m['user1_id'] == $user_id) {
+                $other_user_id = $m['user2_id'];
+                $other_user_name = $m['user2_first'] . ' ' . $m['user2_last'];
+            } else {
+                $other_user_id = $m['user1_id'];
+                $other_user_name = $m['user1_first'] . ' ' . $m['user1_last'];
+            }
+            break;
+        }
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $match_id = $_POST['match_id'];
     $message = $_POST['message'];
@@ -96,57 +114,68 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <a href="matchmake.php">Matchmake</a>
             <a href="matches.php">My Duo's</a>
             <a href="aboutus.php">About Us</a>
+            <a href="logout.php">Logout</a>
         </nav>
 
+    <div class="content">
         <div class="matches-container">
 
-    <!-- Messaging Sidebar (Matched User Display) -->
-            <div class="matches-sidebar">
-                <?php foreach ($matches as $match):
-                    $other_user_name = ($match['user1_id'] == $user_id) 
-                        ? $match['user2_first'] . ' ' . $match['user2_last']
-                        : $match['user1_first'] . ' ' . $match['user1_last'];
-                ?>
-                    <a href="matches.php?match_id=<?= $match['match_id'] ?>" class="match-user">
-                        <?=$other_user_name ?>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-
-    <!-- Messaging Screen -->
-            <div class="chat-area">
-                <div class="chat-header">
-                    <img src="../assets/profile.png" class="profile-pic">
-                    <span class="username">MatchedUser</span>
-
-                    <div class="header-buttons">
-                        <button>View Profile</button>
-                        <button class="danger">Unmatch</button>
-                    </div>
-                </div>
-
-                <div class="chat-messages">
-                    <?php foreach ($messages as $message):
-                        $class = ($message['sender_id'] == $user_id) ? "sent" : "received";
+        <!-- Messaging Sidebar (Matched User Display) -->
+                <div class="matches-sidebar">
+                    <?php foreach ($matches as $match):
+                        $sidebar_name = ($match['user1_id'] == $user_id) 
+                            ? $match['user2_first'] . ' ' . $match['user2_last']
+                            : $match['user1_first'] . ' ' . $match['user1_last'];
                     ?>
-                        <div class = "message <?= $class ?>">
-                            <?= htmlspecialchars($message['message']) ?>
-                        </div>
+                        <a href="matches.php?match_id=<?= $match['match_id'] ?>" class="match-user">
+                            <?= $sidebar_name ?>
+                        </a>
                     <?php endforeach; ?>
                 </div>
+        <!-- Messaging Screen -->
+                <div class="chat-area">
+                    <div class="chat-header">
+                        <img src="../assets/profile.png" class="profile-pic">
+                        <span class="username"><?= htmlspecialchars($other_user_name) ?></span>
 
-                <div class="chat-input">
-                    <?php if ($selected_match_id): ?>
-                        <form method="POST" style="display:flex; width:100%;">
-                            <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
-                            <input type="text" name="message" placeholder="Type message..." required>
-                            <button type="submit">Send</button>
-                    </form>
-                    <?php endif; ?>
+                        <div class="header-buttons">
+                            <?php if ($selected_match_id && $other_user_id): ?>
+                                <a href="profilepage.php?user_id=<?= $other_user_id ?>">
+                                    <button>View Profile</button>
+                                </a>
+                                <form action="unmatch.php" method="POST" 
+                                    onsubmit="return confirm('Are you sure you want to unmatch?');" 
+                                    style="display:inline;">
+                                    <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
+                                    <button type="submit" class="danger">Unmatch</button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages">
+                        <?php foreach ($messages as $message):
+                            $class = ($message['sender_id'] == $user_id) ? "sent" : "received";
+                        ?>
+                            <div class = "message <?= $class ?>">
+                                <?= htmlspecialchars($message['message']) ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="chat-input">
+                        <?php if ($selected_match_id): ?>
+                            <form method="POST" style="display:flex; width:100%;">
+                                <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
+                                <input type="text" name="message" placeholder="Type message..." required>
+                                <button type="submit">Send</button>
+                        </form>
+                        <?php endif; ?>
+                    </div>
+
                 </div>
-
-            </div>
         </div>
+    </div>
 
     
 
