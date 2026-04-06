@@ -2,11 +2,12 @@ body {
     margin: 0;
     background-color: black;
     background-image: url("Background.png");
-    background-size: cover;
+    background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
     height: 100vh;
-
+    width: 100vw;
+    overflow: hidden;
 
     display: flex;
     flex-direction: column;
@@ -14,6 +15,16 @@ body {
     justify-content: center;
 
     font-family: 'Press Start 2P', cursive;
+}
+
+.screen-area {
+    width: 62vw;
+    height: 85vh;
+    margin-top: 3vh;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .landing-logo { 
@@ -32,10 +43,16 @@ h1, h3 { /* Header Colors */
 }
 
 .content {
-    justify-content:center;
-    align-items:center;
-    padding: 10px;
-    height:75vh;
+    width: 58vw;
+    height: 82vh;
+    margin-top: 6vh;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
 }
 
 .clickable-content {       
@@ -49,16 +66,22 @@ h1, h3 { /* Header Colors */
 }
 
 nav {
-    position: absolute;
-    top: 35px;
+    position: fixed;
+    top: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    gap: 20px;
+    gap: 25px;
+    z-index: 100;
+    max-width: 58vw;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 nav a {
     text-decoration: none;
-    font-size: 14px;
-    padding: 15px;
+    font-size: clamp(7px, 1vw, 12px);
+    padding: 6px;
 
     color: #00ffff;
     text-shadow:
@@ -88,11 +111,14 @@ nav a {
         0 0 1px #00ffff,
         0 0 2px #00ffff,
         0 0 4px #0088ff;
-    height: 60%;
-    width: 50%;            
+    
+    max-height: 80vh;
+    max-width: 55vw;
+    width: 400px;
     padding: 20px 30px;        
     margin: auto;         
     text-align: center;
+    overflow-y: auto;
 } 
 
 .login-box::before,
@@ -167,6 +193,30 @@ nav a {
 }
 
 /* About us styling */
+.border-box {
+    position: relative;
+    background: transparent !important;
+    border: 5px solid #00ffff;
+
+    box-shadow:
+        0 0 2px #00ffff,
+        0 0 4px #00ffff,
+        0 0 8px #00ffff,
+        0 0 12px #0088ff;
+
+    color: #ffffff;
+
+    padding: 20px;
+    margin: auto;
+    text-align: center;
+
+    max-width: 55vw;
+    max-height: 70vh;
+    overflow-y: auto;
+    width: 85%;
+    font-size: clamp(8px, 1vw, 12px);
+}
+
 .text-box {
     position: relative;
     background: transparent !important;
@@ -180,18 +230,21 @@ nav a {
 
     color: #ffffff;
 
-    padding: 30px;
+    padding: 20px;
     margin: auto;
     text-align: center;
 
-    max-width: 800px;  
-    width: 90%;
+    max-width: 50vw;
+    max-height: 65vh;
+    overflow-y: auto;
+    width: 85%;
+    font-size: clamp(8px, 1vw, 12px);
 }
 
 .team-image {
-    width: 100%;
-    max-width: 500px;
-    margin-bottom: 20px;
+    width: 60%;
+    max-width: 400px;
+    margin-bottom: 15px;
 
     image-rendering: pixelated; 
 }
@@ -202,13 +255,14 @@ nav a {
 /* MESSAGING CLASSES */
 .matches-container {
     display: grid;
-    grid-template-columns: 250px 1fr; 
-    height: 75vh;
-    width: 90%;
-    max-width: 1100px;
+    grid-template-columns: 180px 1fr;
+    height: 68vh;
+    width: 55vw;
+    margin-top: 1vh;
     color: #ffffff;
     border: 5px solid #00ffff;
     box-shadow: 0 0 12px #00ffff;
+    overflow: hidden;
 }
 
 .matches-sidebar {
@@ -242,6 +296,34 @@ nav a {
 
     padding: 10px;
     border-bottom: 3px solid #00ffff;
+}
+
+.header-buttons button {
+    padding: 8px 15px;
+    background: transparent;
+    border: 1px solid #00ffff;
+    color: #00ffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.header-buttons button:hover {
+    background: rgba(0, 255, 255, 0.2);
+}
+
+.header-buttons button.danger {
+    border-color: #ff4444;
+    color: #ff4444;
+}
+
+.header-buttons button.danger:hover {
+    background: rgba(255, 68, 68, 0.2);
+}
+
+.header-buttons a {
+    text-decoration: none;
 }
 
 .profile-pic {

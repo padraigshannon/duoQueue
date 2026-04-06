@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 // DB connection
 $host = 'localhost';
-$db   = 'cs4116';
+$db   = 'duoqueue_db';
 $user = 'root';
 $pass = '';
 
@@ -133,6 +133,7 @@ $stmt->closeCursor();
         <a href="matchmake.php">Matchmake</a>
         <a href="matches.php">My Duo's</a>
         <a href="aboutus.php">About Us</a>
+        <a href="logout.php">Logout</a>
     </nav>
 
 <div class="content">
