@@ -22,6 +22,7 @@
         <a href="matchmake.php">Matchmake</a>
         <a href="matches.php">My Duo's</a>
         <a href="aboutus.php">About Us</a>
+        <a href="logout.php">Logout</a>
     </nav>
 
     <div class="content">

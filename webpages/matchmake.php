@@ -5,10 +5,10 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // DB connection
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'cs4116';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -105,6 +105,14 @@ $stmt->closeCursor();
 </head>
 
 <body>
+
+    <nav>
+        <a href="home.php">Home</a>
+        <a href="profilepage.php">Profile</a>
+        <a href="matchmake.php">Matchmake</a>
+        <a href="matches.php">My Duo's</a>
+        <a href="aboutus.php">About Us</a>
+    </nav>
 
 <div class="content">
 
