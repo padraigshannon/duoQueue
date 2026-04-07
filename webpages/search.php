@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -37,6 +37,13 @@ if (!empty($query)) {
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
+    <nav>
+        <a href="adminHome.php">Home</a>
+        <a href="moderation.php">Moderation</a>
+        <a href="search.php">Search</a>
+        <a href="logout.php">Logout</a>
+    </nav>
+
     <div class="login-box">
         <h2>User Search</h2>
 

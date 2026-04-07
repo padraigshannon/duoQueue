@@ -17,7 +17,8 @@
 <body>
 
     <nav>
-        <a href="home.php">Home</a>
+        <a href="adminHome.php">Home</a>
+        <a href="moderation.php">Moderation</a>
         <a href="search.php">Search</a>
         <a href="logout.php">Logout</a>
     </nav>

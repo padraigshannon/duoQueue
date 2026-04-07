@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -55,7 +55,7 @@ if ($selected_match_id) {
 }
 
 $other_user_id = null;
-$other_user_name = "MatchedUser";
+$other_user_name = "No Match Selected";
 
 if ($selected_match_id) {
     foreach ($matches as $m) {
