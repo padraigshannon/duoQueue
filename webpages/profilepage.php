@@ -167,6 +167,10 @@ if (!empty($profile['date_of_birth'])) {
 
 
     <nav>
+    	<?php if (!empty($_SESSION['is_admin'])): ?>
+        	<a href="adminHome.php">Home</a>
+        	<a href="search.php">Search</a>
+        <?php else: ?>    
         <a href="home.php">Home</a>
         <a href="profilepage.php">Profile</a>
         <?php if ($is_own_profile): ?>
@@ -175,6 +179,7 @@ if (!empty($profile['date_of_birth'])) {
         <a href="matchmake.php">Matchmake</a>
         <a href="matches.php">My Duo's</a>
         <a href="aboutus.php">About Us</a>
+        <?php endif; ?>
         <a href="logout.php">Logout</a>
     </nav>
     <div class="content">
