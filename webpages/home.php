@@ -5,10 +5,10 @@
             exit;
         }
     
-    $host = 'localhost';
-    $db   = 'duoqueue_db';
-    $user = 'root';
-    $pass = '';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -30,7 +30,7 @@
     $stmt = $pdo->prepare("SELECT * FROM user_profiles WHERE user_id = ?");
     $stmt->execute([$uid]);
     $profile = $stmt->fetch(PDO::FETCH_ASSOC);
-    $profileComplete = !empty($profile) && !empty($profile['about_me']) && !empty($profile['profile_photo']);
+    $profileComplete = !empty($profile['about_me']) && !empty($profile['profile_photo']);
     ?>
 
 <!DOCTYPE html>

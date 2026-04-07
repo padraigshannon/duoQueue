@@ -37,6 +37,13 @@ if (!empty($query)) {
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
+    <nav>
+        <a href="adminHome.php">Home</a>
+        <a href="moderation.php">Moderation</a>
+        <a href="search.php">Search</a>
+        <a href="logout.php">Logout</a>
+    </nav>
+
     <div class="login-box">
         <h2>User Search</h2>
 

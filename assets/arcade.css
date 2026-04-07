@@ -484,6 +484,11 @@ nav a {
     box-shadow: 0 0 5px #00ffff;
 }
 
+::-webkit-scrollbar:horizontal {
+    height: 0;
+    display: none;
+}
+
 /* MATCHMAKE CLASSES*/
 .match-card {
     width: 400px;
@@ -556,4 +561,204 @@ nav a {
     padding: 15px;
     margin-bottom: 20px;
     text-align: center;
+}
+
+/* Moderation Page */
+.report-short {
+    padding: 0;
+    overflow-y: auto;
+    grid-column: 1 / -1;
+}
+
+.report-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 3px solid #00ffff;
+    color: #ffffff;
+    gap: 15px;
+}
+
+.report-row:hover {
+    background: rgba(0, 255, 255, 0.08);
+}
+
+.report-row .profile-pic {
+    flex-shrink: 0;
+}
+
+.report-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.report-info .username {
+    flex-grow: 0;
+    margin-left: 0;
+    font-size: clamp(8px, 0.9vw, 11px);
+    color: #00ffff;
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+}
+
+.report-detail {
+    display: block;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(6px, 0.7vw, 9px);
+}
+
+.report-detail span {
+    color: #ffaa00;
+}
+
+.report-row .header-buttons {
+    flex-shrink: 0;
+}
+
+/* Report View Page */
+.report-page {
+    width: 58vw;
+    height: 84vh;
+    margin-top: 1vh;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.report-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px 10px 10px;
+}
+
+.back-btn {
+    text-decoration: none;
+    color: #00ffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(7px, 0.8vw, 10px);
+    border: 1px solid #00ffff;
+    padding: 8px 14px;
+    transition: all 0.15s ease;
+}
+
+.back-btn:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 8px #00ffff;
+}
+
+.report-date {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(6px, 0.7vw, 9px);
+}
+
+.report-container {
+    flex: 1;
+    border: 5px solid #00ffff;
+    box-shadow: 0 0 12px #00ffff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.report-header {
+    padding: 15px 20px;
+    border-bottom: 3px solid #00ffff;
+}
+
+.report-title {
+    color: #00ffff;
+    font-size: clamp(10px, 1.2vw, 15px);
+    margin: 0 0 12px 0;
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+}
+
+.report-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(6px, 0.75vw, 9px);
+}
+
+.report-meta span {
+    color: #ffaa00;
+}
+
+.report-chatlog {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 20px;
+    overflow: hidden;
+}
+
+.report-chatlog-title {
+    color: #00ffff;
+    font-size: clamp(8px, 0.9vw, 11px);
+    text-align: center;
+    margin-bottom: 10px;
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+}
+
+.report-messages {
+    flex: 1;
+    border: 2px solid #00ffff;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+.report-actions {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 12px 20px;
+    border-top: 3px solid #00ffff;
+}
+
+.report-actions button {
+    padding: 10px 25px;
+    background: transparent;
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(6px, 0.7vw, 9px);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-remove {
+    border: 2px solid #00ffff;
+    color: #00ffff;
+}
+
+.btn-remove:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 8px #00ffff;
+}
+
+.btn-ban {
+    border: 2px solid #ff4444;
+    color: #ff4444;
+}
+
+.btn-ban:hover {
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 8px #ff4444;
 }

@@ -55,7 +55,7 @@ if ($selected_match_id) {
 }
 
 $other_user_id = null;
-$other_user_name = "MatchedUser";
+$other_user_name = "No Match Selected";
 
 if ($selected_match_id) {
     foreach ($matches as $m) {

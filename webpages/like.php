@@ -3,7 +3,7 @@ session_start();
 
 // DB connection
 $host = 'localhost';
-$db   = 'cs4116';
+$db   = 'duoqueue_db';
 $user = 'root';
 $pass = '';
 
