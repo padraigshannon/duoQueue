@@ -624,8 +624,8 @@ nav a {
 /* Report View Page */
 .report-page {
     width: 58vw;
-    height: 84vh;
-    margin-top: 1vh;
+    height: 86vh;
+    margin: top 1vh;
     display: flex;
     flex-direction: column;
     padding: 15px;
