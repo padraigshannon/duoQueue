@@ -49,11 +49,26 @@ $stmt->execute([$userId]);
 $selectedGames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 $stmt = $pdo->prepare("SELECT platform_id, platform_name FROM available_platforms ORDER BY platform_name");
+$stmt->execute();
 $allPlatforms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $stmt = $pdo->prepare("SELECT platform_id FROM user_platforms WHERE user_id = ?");
 $stmt->execute([$userId]);
 $selectedPlatforms = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$selectedGameNames = [];
+foreach ($allGames as $game) {
+    if (in_array($game['game_id'], $selectedGames, true)) {
+        $selectedGameNames[] = $game['game_name'];
+    }
+}
+
+$selectedPlatformNames = [];
+foreach ($allPlatforms as $platform) {
+    if (in_array($platform['platform_id'], $selectedPlatforms, true)) {
+        $selectedPlatformNames[] = $platform['platform_name'];
+    }
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $location    = trim($_POST["location"] ?? '');
@@ -150,9 +165,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             if (!empty($selectedPlatforms)) {
-                $stmt = $pdo->prepare("INSERT INTO user_platforms (user_id, platform_id) VALUES (?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO user_platforms (user_id, platform_id, platform_username) VALUES (?, ?, ?)");
                 foreach ($selectedPlatforms as $platformId) {
-                    $stmt->execute([$userId, $platformId]);
+                    $stmt->execute([$userId, $platformId, '']);
                 }
             }
 
@@ -213,8 +228,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p id="previewGender"><?= htmlspecialchars($profile['gender'] ?? 'Gender') ?></p>
                 <p id="previewLocation"><?= htmlspecialchars($profile['location'] ?? 'Location') ?></p>
                 <p id="previewOrientation">Seeking: <?= htmlspecialchars($profile['seeking'] ?? '') ?></p>
-                <p id="previewGames">Favorite Games:</p>
-                <p id="previewPlatforms">Platforms:</p>
+                <p id="previewGames">Favorite Games: <?= htmlspecialchars(!empty($selectedGameNames) ? implode(', ', $selectedGameNames) : '') ?></p>
+                <p id="previewPlatforms">Platforms: <?= htmlspecialchars(!empty($selectedPlatformNames) ? implode(', ', $selectedPlatformNames) : '') ?></p>
                 <p id="previewBio"><?= htmlspecialchars($profile['about_me'] ?? 'Your bio will appear here...') ?></p>
             </div>
 
@@ -336,7 +351,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         document.getElementById("platforms").onchange = e => {
             document.getElementById("previewPlatforms").textContent = "Platforms: " + Array.from(e.target.selectedOptions).map(opt => opt.text).join(", ");
         };
-
+        document.getElementById("platforms").onchange = e => {
+            document.getElementById("previewPlatforms").textContent = "Platforms: " + Array.from(e.target.selectedOptions).map(opt => opt.text).join(", ");
+        };
         document.getElementById("bioInput").oninput = e =>
             document.getElementById("previewBio").textContent = e.target.value || "Your bio will appear here...";
 

@@ -72,3 +72,27 @@ VALUES
 (32, 'Ballymun', '', '1999-12-08', 'Female', 'Other', 'All-rounder gamer. Play everything! Looking for someone down to play any game together!', false, false)
 ON DUPLICATE KEY UPDATE
 user_id=user_id;
+
+INSERT INTO available_games (game_name) VALUES
+('League of Legends'),
+('Battlefield 6'),
+('Call of Duty'),
+('Plants vs Zombies'),
+('Deadlock'),
+('Fortnite'),
+('Valorant'),
+('Minecraft'),
+('Stardew Valley'),
+('Elden Ring')
+ON DUPLICATE KEY UPDATE
+game_name=game_name;
+
+INSERT INTO available_platforms (platform_name) VALUES
+('PC'),
+('PlayStation'),
+('Xbox'),
+('Nintendo Switch'),
+('Mobile'),
+('VR')
+ON DUPLICATE KEY UPDATE
+platform_name=platform_name;
