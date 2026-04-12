@@ -59,7 +59,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $selectedGames = $_POST["games"] ?? [];
     $profilePhoto = "";
 
-    if(!empty($dateOfBirth)){
+    if (count($selectedGames) > 5) {
+        $error = "You can select up to 5 games to add to your favourite games!.";
+    }
+
+    if (!empty($dateOfBirth)) {
         $dob = DateTime::createFromFormat('Y-m-d', $dateOfBirth);
         if (!$dob || $dob->format('Y-m-d') !== $dateOfBirth) {
             $error = "Invalid date format.";
@@ -155,7 +159,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!empty($profilePhoto)) {
                 $currentPhoto = '/' . $profilePhoto;
             }
-
         } catch (PDOException $e) {
             $error = "Profile update failed: " . $e->getMessage();
         }
@@ -165,6 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -175,22 +179,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    
-        <nav>
+
+    <nav>
         <a href="home.php">Home</a>
         <a href="profile.php">Profile</a>
         <a href="matchmake.php">Matchmake</a>
         <a href="matches.php">My Duo's</a>
         <a href="aboutus.php">About Us</a>
     </nav>
-    
+
     <div class="content">
         <div class="profile-main-container">
 
             <div class="profile-preview">
-                <img src="<?= htmlspecialchars($currentPhoto) ?>" 
-     				id="profileImage" 
-     				style="width:150px; height:150px; object-fit:cover; border-radius:25%;">
+                <img src="<?= htmlspecialchars($currentPhoto) ?>"
+                    id="profileImage"
+                    style="width:150px; height:150px; object-fit:cover; border-radius:25%;">
                 <h2><?= htmlspecialchars($userData['first_name'] . ' ' . $userData['last_name']) ?></h2>
                 <p id="previewGender"><?= htmlspecialchars($profile['gender'] ?? 'Gender') ?></p>
                 <p id="previewLocation"><?= htmlspecialchars($profile['location'] ?? 'Location') ?></p>
@@ -239,9 +243,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label>Gender:</label>
                         <select name="gender" id="genderInput" <?= $isNewProfile ? 'required' : '' ?>>
                             <option value="">Select Gender</option>
-                            <option value="Male"   <?= ($profile['gender'] ?? '') === 'Male'   ? 'selected' : '' ?>>Male</option>
+                            <option value="Male" <?= ($profile['gender'] ?? '') === 'Male'   ? 'selected' : '' ?>>Male</option>
                             <option value="Female" <?= ($profile['gender'] ?? '') === 'Female' ? 'selected' : '' ?>>Female</option>
-                            <option value="Other"  <?= ($profile['gender'] ?? '') === 'Other'  ? 'selected' : '' ?>>Other</option>
+                            <option value="Other" <?= ($profile['gender'] ?? '') === 'Other'  ? 'selected' : '' ?>>Other</option>
                         </select>
                     </div>
 
@@ -249,23 +253,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label>Seeking:</label>
                         <select name="seeking" id="seekingInput" <?= $isNewProfile ? 'required' : '' ?>>
                             <option value="">Select</option>
-                            <option value="Male"   <?= ($profile['seeking'] ?? '') === 'Male'   ? 'selected' : '' ?>>Male</option>
+                            <option value="Male" <?= ($profile['seeking'] ?? '') === 'Male'   ? 'selected' : '' ?>>Male</option>
                             <option value="Female" <?= ($profile['seeking'] ?? '') === 'Female' ? 'selected' : '' ?>>Female</option>
-                            <option value="Other"  <?= ($profile['seeking'] ?? '') === 'Other'  ? 'selected' : '' ?>>Other</option>
+                            <option value="Other" <?= ($profile['seeking'] ?? '') === 'Other'  ? 'selected' : '' ?>>Other</option>
                         </select>
                     </div>
 
-                    <div class = "profile-form-group">
-                        <label>Favorite Games:</label>
-                        <select name ="games[]" id="games" <?= $isNewProfile ? 'required' : '' ?>>
+                    <div class="profile-form-group">
+                        <label>Favorite Games (Choose up to 5):</label>
+                        <input type="text" id="gameSearch" placeholder="Search Games..." style="margin-bottom:10px; width:100%">
+                        <div id="gamesList" style="max-height:220px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:6px;">
                             <?php foreach ($allGames as $game): ?>
-                                <option value="<?= htmlspecialchars($game['game_id']) ?>"
-                                    <?= in_array($game['game_id'], $selectedGames) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($game['game_name']) ?>
-                                </option>
+                                <label class="game-option" style="display:block; margin-bottom:8px;">
+                                    <input type="checkbox" name="games[]" value="<?= htmlspecialchars($game['game_id']) ?>"
+                                        <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
+                                    <span><?= htmlspecialchars($game['game_name']) ?></span>
+                                </label>
                             <?php endforeach; ?>
-
-                        </select>
+                        </div>
                     </div>
 
                     <div class="profile-form-group">
@@ -298,10 +303,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         document.getElementById("seekingInput").onchange = e =>
             document.getElementById("previewOrientation").textContent = "Seeking: " + (e.target.value || "");
 
-        document.getElementById("games").onchange = e => {
-            document.getElementById("previewGames").textContent = "Favorite Games: " + Array.from(e.target.selectedOptions).map(opt => opt.text).join(", ");
-        };
-
         document.getElementById("bioInput").oninput = e =>
             document.getElementById("previewBio").textContent = e.target.value || "Your bio will appear here...";
 
@@ -313,7 +314,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 reader.readAsDataURL(file);
             }
         };
+
+        const gameSearch = document.getElementById("gameSearch");
+        const gameOptions = document.querySelectorAll("#gamesList .game-option");
+        const gameCheckboxes = document.querySelectorAll('#gamesList input[type="checkbox"]');
+        const previewGames = document.getElementById("previewGames");
+
+        function updatePreviewGames() {
+            const selected = Array.from(gameCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.parentElement.querySelector("span").textContent);
+
+            previewGames.textContent = "Favorite Games: " + (selected.length ? selected.join(", ") : "");
+        }
+
+        gameSearch.addEventListener("input", function() {
+            const search = this.value.toLowerCase();
+
+            gameOptions.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(search) ? "block" : "none";
+            });
+        });
+
+        gameCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+                const checkedCount = Array.from(gameCheckboxes).filter(cb => cb.checked).length;
+
+                if (checkedCount > 5) {
+                    this.checked = false;
+                    alert("You can select up to 5 favourite games only.");
+                }
+
+                updatePreviewGames();
+            });
+        });
+        updatePreviewGames();
     </script>
 
 </body>
+
 </html>
