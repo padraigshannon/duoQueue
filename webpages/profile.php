@@ -48,6 +48,13 @@ $stmt = $pdo->prepare("SELECT game_id FROM users_games WHERE user_id = ?");
 $stmt->execute([$userId]);
 $selectedGames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+$stmt = $pdo->prepare("SELECT platform_id, platform_name FROM available_platforms ORDER BY platform_name");
+$allPlatforms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $pdo->prepare("SELECT platform_id FROM user_platforms WHERE user_id = ?");
+$stmt->execute([$userId]);
+$selectedPlatforms = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $location    = trim($_POST["location"] ?? '');
     $dateOfBirth = trim($_POST["date_of_birth"] ?? '');
@@ -57,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $smoker      = isset($_POST["smoker"]) ? 1 : 0;
     $drinker     = isset($_POST["drinker"]) ? 1 : 0;
     $selectedGames = $_POST["games"] ?? [];
+    $selectedPlatforms = $_POST["platforms"] ?? [];
     $profilePhoto = "";
 
     if(!empty($dateOfBirth)){
@@ -131,10 +139,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $pdo->prepare("DELETE FROM users_games WHERE user_id = ?");
             $stmt->execute([$userId]);
 
+            $stmt = $pdo->prepare("DELETE FROM user_platforms WHERE user_id = ?");
+            $stmt->execute([$userId]);
+
             if (!empty($selectedGames)) {
                 $stmt = $pdo->prepare("INSERT INTO users_games (user_id, game_id) VALUES (?, ?)");
                 foreach ($selectedGames as $gameId) {
                     $stmt->execute([$userId, $gameId]);
+                }
+            }
+
+            if (!empty($selectedPlatforms)) {
+                $stmt = $pdo->prepare("INSERT INTO user_platforms (user_id, platform_id) VALUES (?, ?)");
+                foreach ($selectedPlatforms as $platformId) {
+                    $stmt->execute([$userId, $platformId]);
                 }
             }
 
@@ -196,6 +214,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p id="previewLocation"><?= htmlspecialchars($profile['location'] ?? 'Location') ?></p>
                 <p id="previewOrientation">Seeking: <?= htmlspecialchars($profile['seeking'] ?? '') ?></p>
                 <p id="previewGames">Favorite Games:</p>
+                <p id="previewPlatforms">Platforms:</p>
                 <p id="previewBio"><?= htmlspecialchars($profile['about_me'] ?? 'Your bio will appear here...') ?></p>
             </div>
 
@@ -264,9 +283,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <?= htmlspecialchars($game['game_name']) ?>
                                 </option>
                             <?php endforeach; ?>
-
                         </select>
                     </div>
+
+                    <div class = "profile-form-group">
+                        <label>Platforms:</label>
+                        <select name ="platforms[]" id="platforms" <?= $isNewProfile ? 'required' : '' ?>>
+                            <?php foreach ($allPlatforms as $platform): ?>
+                                <option value="<?= htmlspecialchars($platform['platform_id']) ?>"
+                                    <?= in_array($platform['platform_id'], $selectedPlatforms) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($platform['platform_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
 
                     <div class="profile-form-group">
                         <textarea name="about_me" placeholder="Write a short bio..." id="bioInput"
@@ -300,6 +331,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         document.getElementById("games").onchange = e => {
             document.getElementById("previewGames").textContent = "Favorite Games: " + Array.from(e.target.selectedOptions).map(opt => opt.text).join(", ");
+        };
+
+        document.getElementById("platforms").onchange = e => {
+            document.getElementById("previewPlatforms").textContent = "Platforms: " + Array.from(e.target.selectedOptions).map(opt => opt.text).join(", ");
         };
 
         document.getElementById("bioInput").oninput = e =>
