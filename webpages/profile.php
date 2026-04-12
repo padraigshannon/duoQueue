@@ -41,6 +41,13 @@ $currentPhoto = !empty($profile['profile_photo'])
     ? '/' . $profile['profile_photo']
     : 'https://via.placeholder.com/150';
 
+$stmt = $pdo->query("SELECT game_id, game_name FROM available_games ORDER BY game_name");
+$allGames = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $pdo->prepare("SELECT game_id FROM users_games WHERE user_id = ?");
+$stmt->execute([$userId]);
+$selectedGames = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $location    = trim($_POST["location"] ?? '');
 	$dateOfBirth = trim($_POST["date_of_birth"] ?? '');
@@ -49,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$aboutMe     = trim($_POST["about_me"] ?? '');
     $smoker      = isset($_POST["smoker"]) ? 1 : 0;
     $drinker     = isset($_POST["drinker"]) ? 1 : 0;
+    $selectedGames = $_POST["games"] ?? [];
     $profilePhoto = "";
 
     // new profile, details required
@@ -106,6 +114,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     drinker       = VALUES(drinker),
                     profile_photo = IF(VALUES(profile_photo) = '', profile_photo, VALUES(profile_photo))");
             $stmt->execute([$userId, $location, $dateOfBirth, $gender, $seeking, $aboutMe, $smoker, $drinker, $profilePhoto]);
+
+            $stmt = $pdo->prepare("DELETE FROM users_games WHERE user_id = ?");
+            $stmt->execute([$userId]);
+
+            if (!empty($selectedGames)) {
+                $stmt = $pdo->prepare("INSERT INTO users_games (user_id, game_id) VALUES (?, ?)");
+                foreach ($selectedGames as $gameId) {
+                    $stmt->execute([$userId, $gameId]);
+                }
+            }
 
             $profile = [
                 'location'      => $location,
@@ -218,6 +236,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <option value="Male"   <?= ($profile['seeking'] ?? '') === 'Male'   ? 'selected' : '' ?>>Male</option>
                             <option value="Female" <?= ($profile['seeking'] ?? '') === 'Female' ? 'selected' : '' ?>>Female</option>
                             <option value="Other"  <?= ($profile['seeking'] ?? '') === 'Other'  ? 'selected' : '' ?>>Other</option>
+                        </select>
+                    </div>
+
+                    <div class = "profile-form-group">
+                        <label>Favorite Games:</label>
+                        <select name ="games[]" id="games" <?= $isNewProfile ? 'required' : '' ?>>
+                            <?php foreach ($allGames as $game): ?>
+                                <option value="<?= htmlspecialchars($game['game_id']) ?>"
+                                    <?= in_array($game['game_id'], $selectedGames) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($game['game_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+
                         </select>
                     </div>
 
