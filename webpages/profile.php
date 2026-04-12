@@ -50,17 +50,30 @@ $selectedGames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $location    = trim($_POST["location"] ?? '');
-	$dateOfBirth = trim($_POST["date_of_birth"] ?? '');
-	$gender      = trim($_POST["gender"] ?? '');
-	$seeking     = trim($_POST["seeking"] ?? '');
-	$aboutMe     = trim($_POST["about_me"] ?? '');
+    $dateOfBirth = trim($_POST["date_of_birth"] ?? '');
+    $gender      = trim($_POST["gender"] ?? '');
+    $seeking     = trim($_POST["seeking"] ?? '');
+    $aboutMe     = trim($_POST["about_me"] ?? '');
     $smoker      = isset($_POST["smoker"]) ? 1 : 0;
     $drinker     = isset($_POST["drinker"]) ? 1 : 0;
     $selectedGames = $_POST["games"] ?? [];
     $profilePhoto = "";
 
+    if(!empty($dateOfBirth)){
+        $dob = DateTime::createFromFormat('Y-m-d', $dateOfBirth);
+        if (!$dob || $dob->format('Y-m-d') !== $dateOfBirth) {
+            $error = "Invalid date format.";
+        } else {
+            $today = new DateTime();
+            $age = $today->diff($dob)->y;
+            if ($age < 18) {
+                $error = "You must be at least 18 years old to use this service.";
+            }
+        }
+    }
+
     // new profile, details required
-    if ($isNewProfile) {
+    if ($isNewProfile && empty($error)) {
         if (empty($location))    $error = "Location is required.";
         if (empty($dateOfBirth)) $error = "Date of birth is required.";
         if (empty($gender))      $error = "Gender is required.";
@@ -215,7 +228,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="profile-form-group">
                         <label>Date of Birth:</label>
+                        <?php $maxDob = date('Y-m-d', strtotime('-18 years')); ?>
                         <input type="date" name="date_of_birth"
+                            max="<?= $maxDob ?>"
                             value="<?= htmlspecialchars($profile['date_of_birth'] ?? '') ?>"
                             <?= $isNewProfile ? 'required' : '' ?>>
                     </div>
