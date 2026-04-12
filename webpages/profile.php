@@ -182,6 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p id="previewGender"><?= htmlspecialchars($profile['gender'] ?? 'Gender') ?></p>
                 <p id="previewLocation"><?= htmlspecialchars($profile['location'] ?? 'Location') ?></p>
                 <p id="previewOrientation">Seeking: <?= htmlspecialchars($profile['seeking'] ?? '') ?></p>
+                <p id="previewGames">Favorite Games:</p>
                 <p id="previewBio"><?= htmlspecialchars($profile['about_me'] ?? 'Your bio will appear here...') ?></p>
             </div>
 
@@ -281,6 +282,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         document.getElementById("seekingInput").onchange = e =>
             document.getElementById("previewOrientation").textContent = "Seeking: " + (e.target.value || "");
+
+        document.getElementById("games").onchange = e => {
+            document.getElementById("previewGames").textContent = "Favorite Games: " + Array.from(e.target.selectedOptions).map(opt => opt.text).join(", ");
+        };
 
         document.getElementById("bioInput").oninput = e =>
             document.getElementById("previewBio").textContent = e.target.value || "Your bio will appear here...";
