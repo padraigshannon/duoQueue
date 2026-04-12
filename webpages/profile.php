@@ -48,6 +48,28 @@ $stmt = $pdo->prepare("SELECT game_id FROM users_games WHERE user_id = ?");
 $stmt->execute([$userId]);
 $selectedGames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+$stmt = $pdo->prepare("SELECT platform_id, platform_name FROM available_platforms ORDER BY platform_name");
+$stmt->execute();
+$allPlatforms = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $pdo->prepare("SELECT platform_id FROM user_platforms WHERE user_id = ?");
+$stmt->execute([$userId]);
+$selectedPlatforms = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$selectedGameNames = [];
+foreach ($allGames as $game) {
+    if (in_array($game['game_id'], $selectedGames, true)) {
+        $selectedGameNames[] = $game['game_name'];
+    }
+}
+
+$selectedPlatformNames = [];
+foreach ($allPlatforms as $platform) {
+    if (in_array($platform['platform_id'], $selectedPlatforms, true)) {
+        $selectedPlatformNames[] = $platform['platform_name'];
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $location    = trim($_POST["location"] ?? '');
     $dateOfBirth = trim($_POST["date_of_birth"] ?? '');
@@ -57,6 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $smoker      = isset($_POST["smoker"]) ? 1 : 0;
     $drinker     = isset($_POST["drinker"]) ? 1 : 0;
     $selectedGames = $_POST["games"] ?? [];
+    $selectedPlatforms = $_POST["platforms"] ?? [];
     $profilePhoto = "";
 
     if (count($selectedGames) > 5) {
@@ -79,10 +102,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // new profile, details required
     if ($isNewProfile && empty($error)) {
         if (empty($location))    $error = "Location is required.";
-        if (empty($dateOfBirth)) $error = "Date of birth is required.";
-        if (empty($gender))      $error = "Gender is required.";
-        if (empty($seeking))     $error = "Seeking is required.";
-        if (empty($aboutMe))     $error = "Bio is required.";
+        elseif (empty($dateOfBirth)) $error = "Date of birth is required.";
+        elseif (empty($gender))      $error = "Gender is required.";
+        elseif (empty($seeking))     $error = "Seeking is required.";
+        elseif (empty($aboutMe))     $error = "Bio is required.";
+        elseif (empty($selectedGames))  $error = "Please select at least 1 favourite game.";
+        elseif (empty($selectedPlatforms))  $error = "Please select at least 1 platform.";
     }
 
     // profile picture upload handling
@@ -135,10 +160,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt = $pdo->prepare("DELETE FROM users_games WHERE user_id = ?");
             $stmt->execute([$userId]);
 
+            $stmt = $pdo->prepare("DELETE FROM user_platforms WHERE user_id = ?");
+            $stmt->execute([$userId]);
+
             if (!empty($selectedGames)) {
                 $stmt = $pdo->prepare("INSERT INTO users_games (user_id, game_id) VALUES (?, ?)");
                 foreach ($selectedGames as $gameId) {
                     $stmt->execute([$userId, $gameId]);
+                }
+            }
+
+            if (!empty($selectedPlatforms)) {
+                $stmt = $pdo->prepare("INSERT INTO user_platforms (user_id, platform_id, platform_username) VALUES (?, ?, ?)");
+                foreach ($selectedPlatforms as $platformId) {
+                    $stmt->execute([$userId, $platformId, '']);
                 }
             }
 
@@ -199,7 +234,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p id="previewGender"><?= htmlspecialchars($profile['gender'] ?? 'Gender') ?></p>
                 <p id="previewLocation"><?= htmlspecialchars($profile['location'] ?? 'Location') ?></p>
                 <p id="previewOrientation">Seeking: <?= htmlspecialchars($profile['seeking'] ?? '') ?></p>
-                <p id="previewGames">Favorite Games:</p>
+                <p id="previewGames">Favorite Games: <?= htmlspecialchars(!empty($selectedGameNames) ? implode(', ', $selectedGameNames) : '') ?></p>
+                <p id="previewPlatforms">Platforms: <?= htmlspecialchars(!empty($selectedPlatformNames) ? implode(', ', $selectedPlatformNames) : '') ?></p>
                 <p id="previewBio"><?= htmlspecialchars($profile['about_me'] ?? 'Your bio will appear here...') ?></p>
             </div>
 
@@ -264,14 +300,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" id="gameSearch" placeholder="Search Games..." style="margin-bottom:10px; width:100%">
                         <div id="gamesList" style="max-height:220px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:6px;">
                             <?php foreach ($allGames as $game): ?>
-                                <label class="game-option" style="display:block; margin-bottom:8px;">
+                                <label class="game-option" style="display:grid; grid-template-columns: 1fr 24px; align-items:center; column-gap:12px; margin-bottom:8px;">
+                                    <span><?= htmlspecialchars($game['game_name']) ?></span>
                                     <input type="checkbox" name="games[]" value="<?= htmlspecialchars($game['game_id']) ?>"
                                         <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
-                                    <span><?= htmlspecialchars($game['game_name']) ?></span>
                                 </label>
                             <?php endforeach; ?>
                         </div>
                     </div>
+
+                    <div class="profile-form-group">
+                        <label>Platforms:</label>
+                        <input type="text" id="platformSearch" placeholder="Search Platforms..." style="margin-bottom:10px; width:100%">
+
+                        <div id="platformsList" style="max-height:220px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:6px;">
+                            <?php foreach ($allPlatforms as $platform): ?>
+                                <label class="platform-option" style="display:grid; grid-template-columns: 1fr 24px; align-items:center; column-gap:12px; margin-bottom:8px;">
+                                    <span><?= htmlspecialchars($platform['platform_name']) ?></span>
+                                    <input type="checkbox" name="platforms[]" value="<?= htmlspecialchars($platform['platform_id']) ?>"
+                                        <?= in_array($platform['platform_id'], $selectedPlatforms) ? 'checked' : '' ?>>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
 
                     <div class="profile-form-group">
                         <textarea name="about_me" placeholder="Write a short bio..." id="bioInput"
@@ -350,6 +402,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
         });
         updatePreviewGames();
+
+        const platformSearch = document.getElementById("platformSearch");
+        const platformOptions = document.querySelectorAll("#platformsList .platform-option");
+        const platformCheckboxes = document.querySelectorAll('#platformsList input[type="checkbox"]');
+        const previewPlatforms = document.getElementById("previewPlatforms");
+
+        function updatePreviewPlatforms() {
+            const selected = Array.from(platformCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.parentElement.querySelector("span").textContent);
+
+            previewPlatforms.textContent = "Platforms: " + (selected.length ? selected.join(", ") : "");
+        }
+
+        platformSearch.addEventListener("input", function() {
+            const search = this.value.toLowerCase();
+
+            platformOptions.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(search) ? "block" : "none";
+            });
+        });
+
+        platformCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+                updatePreviewPlatforms();
+            });
+        });
+
+        updatePreviewPlatforms();
     </script>
 
 </body>
