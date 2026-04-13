@@ -19,22 +19,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->execute([$email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $found_user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['user_id'];
-        $_SESSION['is_admin'] = $user['is_admin'];
+    if ($found_user && password_verify($password, $found_user['password'])) {
 
-        if ($user['is_admin']) {
-            header("Location: adminHome.php");
-        } else {
-            header("Location: home.php");
+        if ($found_user['is_banned']) {
+            $stmt = $pdo->prepare("
+                SELECT created_timestamp, ban_duration 
+                FROM banned 
+                WHERE user_id = ? AND deleted_timestamp IS NULL
+            ");
+            $stmt->execute([$found_user['user_id']]);
+            $ban = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($ban) {
+                $ban_start = new DateTime($ban['created_timestamp']);
+                $ban_end = clone $ban_start;
+                $ban_end->modify('+' . $ban['ban_duration'] . ' days');
+                $now = new DateTime();
+
+                if ($now >= $ban_end) {
+                    $stmt = $pdo->prepare("UPDATE banned SET deleted_timestamp = NOW() WHERE user_id = ? AND deleted_timestamp IS NULL");
+                    $stmt->execute([$found_user['user_id']]);
+
+                    $stmt = $pdo->prepare("UPDATE users SET is_banned = FALSE WHERE user_id = ?");
+                    $stmt->execute([$found_user['user_id']]);
+                } else {
+                    // Still banned
+                    $remaining = $now->diff($ban_end);
+                    $error = "Your account is banned. " . $remaining->days . " day(s) remaining.";
+                }
+            }
         }
-        exit;
+
+        if (empty($error)) {
+            $_SESSION['user_id'] = $found_user['user_id'];
+            $_SESSION['is_admin'] = $found_user['is_admin'];
+
+            if ($found_user['is_admin']) {
+                header("Location: adminHome.php");
+            } else {
+                header("Location: home.php");
+            }
+            exit;
+        }
+
     } else {
         $error = "Invalid email or password.";
     }
 }
+
+
+
 ?>
 <!DOCTYPE html>
 <html>
