@@ -149,6 +149,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
                                     <button type="submit" class="danger">Unmatch</button>
                                 </form>
+                                <a href="reportForm.php?user_id=<?= $other_user_id ?>">
+                                    <button class="danger">Report</button>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>

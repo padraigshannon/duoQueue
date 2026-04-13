@@ -385,12 +385,12 @@ nav a {
 }
 
 .header-buttons button {
-    padding: 8px 15px;
+    padding: 8px 10px;
     background: transparent;
     border: 1px solid #00ffff;
     color: #00ffff;
     font-family: 'Press Start 2P', cursive;
-    font-size: 9px;
+    font-size: 8px;
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -671,6 +671,63 @@ nav a {
     max-width: 100%;
 }
 
+/* Report Form Styling */
+.report-container form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.report-container label {
+    color: #00ffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(8px, 0.9vw, 11px);
+    text-shadow:
+        0 0 .5px #00ffff,
+        0 0 1px #00ffff,
+        0 0 2px #00ffff,
+        0 0 4px #0088ff;
+}
+
+.report-container textarea {
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    background: transparent;
+    border: 2px solid #00ffff;
+    color: #ffffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(7px, 0.8vw, 10px);
+    line-height: 1.8;
+    resize: none;
+    outline: none;
+}
+
+.report-container textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.report-container textarea:focus {
+    box-shadow: 0 0 8px #00ffff;
+}
+
+.report-container .success-msg {
+    color: #0f0;
+    text-align: center;
+    font-size: clamp(7px, 0.8vw, 10px);
+    padding: 20px;
+}
+
+.report-container .error-msg {
+    color: #ff4444;
+    text-align: center;
+    font-size: clamp(7px, 0.8vw, 10px);
+}
+
 .report-header {
     padding: 15px 20px;
     border-bottom: 3px solid #00ffff;
@@ -762,3 +819,4 @@ nav a {
     background: rgba(255, 68, 68, 0.2);
     box-shadow: 0 0 8px #ff4444;
 }
+
