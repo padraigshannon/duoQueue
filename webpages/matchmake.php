@@ -39,7 +39,7 @@ $sql = '
         (
             COALESCE(games_score.pts, 0)
             + COALESCE(plat_score.pts, 0)
-            + IF(up.gender = seeker.seeking, 20, 0)
+            + IF(up.gender = seeker.seeking AND seeker.gender = up.seeking, 20, 0)
             + CASE
                 WHEN ABS(YEAR(NOW()) - YEAR(up.date_of_birth)) <= 5 THEN 15
                 WHEN ABS(YEAR(NOW()) - YEAR(up.date_of_birth)) <= 10 THEN 5
@@ -75,6 +75,8 @@ $sql = '
 
     WHERE u.user_id <> :uid_exclude
         AND u.is_banned = 0
+        AND (up.gender = seeker.seeking OR seeker.seeking = \'any\')
+        AND (seeker.gender = up.seeking OR up.seeking = \'any\')
         AND u.user_id NOT IN (
             SELECT liked_user_id FROM likes WHERE user_id = :uid_likes
         )
@@ -104,7 +106,6 @@ $stmt->execute();
 
 $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
 $stmt->closeCursor();
 ?>
 
@@ -115,8 +116,6 @@ $stmt->closeCursor();
 
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
-    
 </head>
 
 <body>
