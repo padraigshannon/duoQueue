@@ -70,7 +70,38 @@ foreach ($allPlatforms as $platform) {
     }
 }
 
+$stmt = $pdo->prepare("SELECT photo FROM user_photos WHERE user_id = ?");
+$stmt->execute([$userId]);
+$existingGalleryPhotos = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if (isset($_POST['delete_gallery_photo'])) {
+        $photoToDelete = $_POST['delete_gallery_photo'];
+
+        $stmt = $pdo->prepare("SELECT photo FROM user_photos WHERE user_id = ? AND photo = ?");
+        $stmt->execute([$userId, $photoToDelete]);
+        $existingPhoto = $stmt->fetchColumn();
+
+        if ($existingPhoto) {
+            $stmt = $pdo->prepare("DELETE FROM user_photos WHERE user_id = ? AND photo = ?");
+            $stmt->execute([$userId, $photoToDelete]);
+
+            if (file_exists($existingPhoto)) {
+                unlink($existingPhoto);
+            }
+
+            $success = "Gallery photo removed.";
+
+            $stmt = $pdo->prepare("SELECT photo FROM user_photos WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            $existingGalleryPhotos = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } else {
+            $error = "Photo not found.";
+        }
+    }
+
     $location    = trim($_POST["location"] ?? '');
     $dateOfBirth = trim($_POST["date_of_birth"] ?? '');
     $gender      = trim($_POST["gender"] ?? '');
@@ -142,62 +173,121 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    if (empty($error)) {
-        try {
-            $stmt = $pdo->prepare("INSERT INTO user_profiles (user_id, location, date_of_birth, gender, seeking, about_me, smoker, drinker, profile_photo)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE
-                    location      = VALUES(location),
-                    date_of_birth = VALUES(date_of_birth),
-                    gender        = VALUES(gender),
-                    seeking       = VALUES(seeking),
-                    about_me      = VALUES(about_me),
-                    smoker        = VALUES(smoker),
-                    drinker       = VALUES(drinker),
-                    profile_photo = IF(VALUES(profile_photo) = '', profile_photo, VALUES(profile_photo))");
-            $stmt->execute([$userId, $location, $dateOfBirth, $gender, $seeking, $aboutMe, $smoker, $drinker, $profilePhoto]);
+    $galleryPhotos = [];
+if (empty($error) && isset($_FILES['gallery_photos']) && !empty($_FILES['gallery_photos']['name'][0])) {
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    $uploadDir = 'uploads/gallery_photos/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
 
-            $stmt = $pdo->prepare("DELETE FROM users_games WHERE user_id = ?");
-            $stmt->execute([$userId]);
+    $totalExistingStmt = $pdo->prepare("SELECT COUNT(*) FROM user_photos WHERE user_id = ?");
+    $totalExistingStmt->execute([$userId]);
+    $existingCount = (int)$totalExistingStmt->fetchColumn();
 
-            $stmt = $pdo->prepare("DELETE FROM user_platforms WHERE user_id = ?");
-            $stmt->execute([$userId]);
+    $newCount = count($_FILES['gallery_photos']['name']);
+    $maxPhotos = 5;
 
-            if (!empty($selectedGames)) {
-                $stmt = $pdo->prepare("INSERT INTO users_games (user_id, game_id) VALUES (?, ?)");
-                foreach ($selectedGames as $gameId) {
-                    $stmt->execute([$userId, $gameId]);
-                }
+    if (($existingCount + $newCount) > $maxPhotos) {
+        $error = "You can have a maximum of 5 gallery photos. You currently have $existingCount.";
+    } else {
+        for ($i = 0; $i < count($_FILES['gallery_photos']['name']); $i++) {
+            if ($_FILES['gallery_photos']['error'][$i] !== UPLOAD_ERR_OK) {
+                continue;
             }
 
-            if (!empty($selectedPlatforms)) {
-                $stmt = $pdo->prepare("INSERT INTO user_platforms (user_id, platform_id, platform_username) VALUES (?, ?, ?)");
-                foreach ($selectedPlatforms as $platformId) {
-                    $stmt->execute([$userId, $platformId, '']);
-                }
+            $fileType = $_FILES['gallery_photos']['type'][$i];
+            $fileSize = $_FILES['gallery_photos']['size'][$i];
+            $tmpName = $_FILES['gallery_photos']['tmp_name'][$i];
+            $ogName = $_FILES['gallery_photos']['name'][$i];
+
+            if (!in_array($fileType, $allowedTypes, true)) {
+                $error = "Only image files (jpg, png, webp) are allowed for gallery photos.";
+                break;
             }
 
-            $profile = [
-                'location'      => $location,
-                'date_of_birth' => $dateOfBirth,
-                'gender'        => $gender,
-                'seeking'       => $seeking,
-                'about_me'      => $aboutMe,
-                'smoker'        => $smoker,
-                'drinker'       => $drinker,
-                'profile_photo' => $profilePhoto ?: ($profile['profile_photo'] ?? '')
-            ];
-
-            $isNewProfile = false;
-            $success = "Profile saved successfully!";
-
-            if (!empty($profilePhoto)) {
-                $currentPhoto = '/' . $profilePhoto;
+            if ($fileSize > 2 * 1024 * 1024) {
+                $error = "Each gallery photo must be under 2MB.";
+                break;
             }
-        } catch (PDOException $e) {
-            $error = "Profile update failed: " . $e->getMessage();
+
+            $extension = pathinfo($ogName, PATHINFO_EXTENSION);
+            $filename = $userId . '_' . time() . '_' . $i . '.' . $extension;
+            $filePath = $uploadDir . $filename;
+
+            if (move_uploaded_file($tmpName, $filePath)) {
+                $galleryPhotos[] = $filePath;
+            } else {
+                $error = "Could not save a gallery photo.";
+                break;
+            }
         }
     }
+}
+
+if (empty($error)) {
+    try {
+        $stmt = $pdo->prepare("INSERT INTO user_profiles (user_id, location, date_of_birth, gender, seeking, about_me, smoker, drinker, profile_photo)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                location      = VALUES(location),
+                date_of_birth = VALUES(date_of_birth),
+                gender        = VALUES(gender),
+                seeking       = VALUES(seeking),
+                about_me      = VALUES(about_me),
+                smoker        = VALUES(smoker),
+                drinker       = VALUES(drinker),
+                profile_photo = IF(VALUES(profile_photo) = '', profile_photo, VALUES(profile_photo))");
+        $stmt->execute([$userId, $location, $dateOfBirth, $gender, $seeking, $aboutMe, $smoker, $drinker, $profilePhoto]);
+
+        $stmt = $pdo->prepare("DELETE FROM users_games WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        $stmt = $pdo->prepare("DELETE FROM user_platforms WHERE user_id = ?");
+        $stmt->execute([$userId]);
+
+        if (!empty($selectedGames)) {
+            $stmt = $pdo->prepare("INSERT INTO users_games (user_id, game_id) VALUES (?, ?)");
+            foreach ($selectedGames as $gameId) {
+                $stmt->execute([$userId, $gameId]);
+            }
+        }
+
+        if (!empty($selectedPlatforms)) {
+            $stmt = $pdo->prepare("INSERT INTO user_platforms (user_id, platform_id, platform_username) VALUES (?, ?, ?)");
+            foreach ($selectedPlatforms as $platformId) {
+                $stmt->execute([$userId, $platformId, '']);
+            }
+        }
+
+        if (!empty($galleryPhotos)) {
+            $stmt = $pdo->prepare("INSERT INTO user_photos (user_id, photo) VALUES (?, ?)");
+            foreach ($galleryPhotos as $photoPath) {
+                $stmt->execute([$userId, $photoPath]);
+            }
+        }
+
+        $profile = [
+            'location'      => $location,
+            'date_of_birth' => $dateOfBirth,
+            'gender'        => $gender,
+            'seeking'       => $seeking,
+            'about_me'      => $aboutMe,
+            'smoker'        => $smoker,
+            'drinker'       => $drinker,
+            'profile_photo' => $profilePhoto ?: ($profile['profile_photo'] ?? '')
+        ];
+
+        $isNewProfile = false;
+        $success = "Profile saved successfully!";
+
+        if (!empty($profilePhoto)) {
+            $currentPhoto = '/' . $profilePhoto;
+        }
+    } catch (PDOException $e) {
+        $error = "Profile update failed: " . $e->getMessage();
+    }
+}
 }
 ?>
 
@@ -217,7 +307,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <nav>
         <a href="home.php">Home</a>
-        <a href="profile.php">Profile</a>
+        <a href="profilepage.php">Profile</a>
         <a href="matchmake.php">Matchmake</a>
         <a href="matches.php">My Duo's</a>
         <a href="aboutus.php">About Us</a>
@@ -261,6 +351,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="profile-form-group">
+                        <label>Photo Gallery:</label>
+                        <input type="file" name="gallery_photos[]" accept="image/*" id="galleryInput" multiple>
+                    </div>
+
+                    <?php if (!empty($existingGalleryPhotos)): ?>
+                        <div class="profile-form-group">
+                            <label>Current Gallery Photos:</label>
+                            <div style="display:flex; flex-wrap:wrap; gap:15px;">
+                                <?php foreach ($existingGalleryPhotos as $galleryPhoto): ?>
+                                    <div style="text-align:center;">
+                                        <img src="<?= htmlspecialchars($galleryPhoto) ?>"
+                                            alt="Gallery Photo"
+                                            style="width:120px; height:120px; object-fit:cover; display:block; margin-bottom:8px;">
+
+                                        <button type="submit"
+                                            name="delete_gallery_photo"
+                                            value="<?= htmlspecialchars($galleryPhoto) ?>"
+                                            onclick="return confirm('Remove this photo from your gallery?');">
+                                            Delete Photo
+                                        </button>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="profile-form-group">
+                        <input type="text" name="location" placeholder="Location" id="locationInput"
+
+                            <div class="profile-form-group">
                         <input type="text" name="location" placeholder="Location" id="locationInput"
                             value="<?= htmlspecialchars($profile['location'] ?? '') ?>"
                             <?= $isNewProfile ? 'required' : '' ?>>
@@ -433,7 +553,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         updatePreviewPlatforms();
     </script>
-
 </body>
 
 </html>

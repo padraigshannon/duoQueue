@@ -124,6 +124,7 @@ if (!empty($profile['date_of_birth'])) {
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body.profile-page {
             justify-content: flex-start;
@@ -309,6 +310,33 @@ if (!empty($profile['date_of_birth'])) {
                             <?php else: ?>
                                 <p>No platforms listed.</p>
                             <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="photoGalleryModal" tabindex="-1" aria-labelledby="photoGalleryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content bg-dark text-light">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="photoGalleryModalLabel">Photo Gallery</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <?php if (!empty($pictures)): ?>
+                                    <div class="row g-3">
+                                        <?php foreach ($pictures as $picture): ?>
+                                            <div class="col-md-6">
+                                                <img src="<?php echo htmlspecialchars($picture); ?>"
+                                                    alt="User Photo"
+                                                    class="img-fluid rounded">
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else: ?>
+                                    <p>No photos uploaded.</p>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
