@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
     <?php
-        session_start();
-        if (!isset($_SESSION['user_id'])) {
-            header("Location: login.php");
-            exit;
-        }
+    session_start();
+    if (!isset($_SESSION["user_id"])) {
+        header("Location: login.php");
+        exit();
+    }
     ?>
 
 <head>
@@ -24,8 +24,8 @@
     </nav>
 
     <div class="content">
-            
-    
+
+
 
     </div>
 
