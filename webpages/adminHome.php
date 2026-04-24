@@ -29,7 +29,7 @@ $totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 
 $totalBanned = $pdo->query("SELECT COUNT(*) FROM users WHERE is_banned = 1")->fetchColumn();
 
-$totalMatches = $pdo->query("SELECT COUNT(*) FROM matches")->fetchColumn();
+$totalGames = $pdo->query("SELECT COUNT(*) FROM available_games")->fetchColumn();
 
 $totalReports = $pdo->query("SELECT COUNT(*) FROM reports")->fetchColumn();
 ?>
@@ -70,8 +70,8 @@ $totalReports = $pdo->query("SELECT COUNT(*) FROM reports")->fetchColumn();
     </div>
 
     <div class="stat-box">
-        <span class="stat-number"><?= $totalMatches ?></span>
-        <span class="stat-label">Matches</span>
+        <span class="stat-number"><?= $totalGames ?></span>
+        <span class="stat-label">Games</span>
     </div>
 
     <div class="stat-box">
