@@ -32,7 +32,8 @@ VALUES
 ('Andrew', 'Hernandez', 'andrew.h@gmail.com', 'pass525', false, false),
 ('Isabella', 'King', 'isabella.k@gmail.com', 'pass626', false, false),
 ('Christopher', 'Wright', 'christopher.w@gmail.com', 'pass727', false, false),
-('Sophia', 'Lopez', 'sophia.l@gmail.com', 'pass828', false, false)
+('Sophia', 'Lopez', 'sophia.l@gmail.com', 'pass828', false, false),
+('Admin', 'User', 'admin@duoqueue.com', '$2y$12$C0oL9lgczJe17riKKm2zfeuPVtgwnicnQDAZXJxErAK09BDj20Sfi', true, false)
 ON DUPLICATE KEY UPDATE
 email=email;
 
@@ -69,7 +70,8 @@ VALUES
 (29, 'Kildare', '', '1998-07-15', 'Male', 'Other', 'Roguelike game specialist. Hades, Dead Cells, Binding of Isaac. Love challenging runs and speedruns!', true, false),
 (30, 'Celbridge', '', '2001-09-29', 'Female', 'Male', 'Survival game enthusiast. ARK and DayZ player. Looking for someone to survive the apocalypse with!', false, true),
 (31, 'Clondalkin', '', '1996-03-22', 'Male', 'Female', 'Multiplayer fighting game buff. Street Fighter and Tekken player. Want to practice and improve with someone!', true, true),
-(32, 'Ballymun', '', '1999-12-08', 'Female', 'Other', 'All-rounder gamer. Play everything! Looking for someone down to play any game together!', false, false)
+(32, 'Ballymun', '', '1999-12-08', 'Female', 'Other', 'All-rounder gamer. Play everything! Looking for someone down to play any game together!', false, false),
+(33, 'Dublin', '', '1990-01-01', 'Other', 'Other', 'System Administrator for DuoQueue. Managing the platform and ensuring smooth gaming experiences for all users.', false, false)
 ON DUPLICATE KEY UPDATE
 user_id=user_id;
 
