@@ -502,7 +502,8 @@ nav a {
     border-radius: 10px;
     text-align: center;
 
-    overflow: hidden;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .match-card label {

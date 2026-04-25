@@ -29,7 +29,6 @@ $sql = '
         u.user_id,
         u.first_name,
         u.last_name,
-        up.profile_photo,
         up.about_me,
         up.location,
         up.gender,
@@ -109,6 +108,11 @@ $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
 $stmt->closeCursor();
 
 if ($potentialMatch) {
+    // Fetch profile photo for the potential match
+    $stmt_profile = $pdo->prepare("SELECT profile_photo FROM user_profiles WHERE user_id = :user_id");
+    $stmt_profile->execute(['user_id' => $potentialMatch['user_id']]);
+    $profile_photo = $stmt_profile->fetchColumn();
+
     // Fetch games for the potential match
     $stmt_games = $pdo->prepare("SELECT ag.game_name FROM available_games ag JOIN users_games ug ON ag.game_id = ug.game_id WHERE ug.user_id = :user_id ORDER BY ag.game_name");
     $stmt_games->execute(['user_id' => $potentialMatch['user_id']]);
@@ -118,6 +122,11 @@ if ($potentialMatch) {
     $stmt_platforms = $pdo->prepare("SELECT ap.platform_name FROM available_platforms ap JOIN user_platforms up ON ap.platform_id = up.platform_id WHERE up.user_id = :user_id ORDER BY ap.platform_name");
     $stmt_platforms->execute(['user_id' => $potentialMatch['user_id']]);
     $platforms = $stmt_platforms->fetchAll(PDO::FETCH_COLUMN);
+
+    // Fetch gallery photos
+    $stmt_photos = $pdo->prepare("SELECT photo FROM user_photos WHERE user_id = :user_id LIMIT 5");
+    $stmt_photos->execute(['user_id' => $potentialMatch['user_id']]);
+    $photos = $stmt_photos->fetchAll(PDO::FETCH_COLUMN);
 }
 ?>
 
@@ -159,6 +168,22 @@ if ($potentialMatch) {
 
     <input type="text" value="<?php echo htmlspecialchars($potentialMatch['first_name']); ?>" readonly>
     <input type="text" value="<?php echo htmlspecialchars($potentialMatch['location']); ?>" readonly>
+
+    <?php if (!empty($profile_photo)): ?>
+    <div class="profile-picture">
+        <h3>Profile Picture:</h3>
+        <img src="../uploads/profile_photos/<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile Picture" style="max-width: 200px; max-height: 200px;">
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($photos)): ?>
+    <div class="gallery">
+        <h3>Gallery Photos:</h3>
+        <?php foreach ($photos as $photo): ?>
+        <img src="../uploads/gallery_photos/<?php echo htmlspecialchars($photo); ?>" alt="Gallery Photo" style="max-width: 100px; max-height: 100px; margin: 5px;">
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
 
     <textarea readonly><?php echo htmlspecialchars($potentialMatch['about_me']); ?></textarea>
 
