@@ -107,6 +107,18 @@ $stmt->execute();
 $potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $stmt->closeCursor();
+
+if ($potentialMatch) {
+    // Fetch games for the potential match
+    $stmt_games = $pdo->prepare("SELECT ag.game_name FROM available_games ag JOIN users_games ug ON ag.game_id = ug.game_id WHERE ug.user_id = :user_id ORDER BY ag.game_name");
+    $stmt_games->execute(['user_id' => $potentialMatch['user_id']]);
+    $games = $stmt_games->fetchAll(PDO::FETCH_COLUMN);
+
+    // Fetch platforms for the potential match
+    $stmt_platforms = $pdo->prepare("SELECT ap.platform_name FROM available_platforms ap JOIN user_platforms up ON ap.platform_id = up.platform_id WHERE up.user_id = :user_id ORDER BY ap.platform_name");
+    $stmt_platforms->execute(['user_id' => $potentialMatch['user_id']]);
+    $platforms = $stmt_platforms->fetchAll(PDO::FETCH_COLUMN);
+}
 ?>
 
 <!DOCTYPE html>
@@ -141,7 +153,7 @@ $stmt->closeCursor();
 
 <div class="match-card">
 
-    <h2>Match Found</h2>
+    <h2>Player Found</h2>
 
     <p>Score: <?php echo $potentialMatch['match_score']; ?></p>
 
@@ -149,6 +161,24 @@ $stmt->closeCursor();
     <input type="text" value="<?php echo htmlspecialchars($potentialMatch['location']); ?>" readonly>
 
     <textarea readonly><?php echo htmlspecialchars($potentialMatch['about_me']); ?></textarea>
+
+    <?php if (!empty($games)): ?>
+    <h3>Games:</h3>
+    <ul>
+        <?php foreach ($games as $game): ?>
+        <li><?php echo htmlspecialchars($game); ?></li>
+        <?php endforeach; ?>
+    </ul>
+    <?php endif; ?>
+
+    <?php if (!empty($platforms)): ?>
+    <h3>Platforms:</h3>
+    <ul>
+        <?php foreach ($platforms as $platform): ?>
+        <li><?php echo htmlspecialchars($platform); ?></li>
+        <?php endforeach; ?>
+    </ul>
+    <?php endif; ?>
 
     <div class="match-actions">
 
