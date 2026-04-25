@@ -39,6 +39,7 @@ if (!empty($query)) {
 <body>
     <nav>
         <a href="adminHome.php">Home</a>
+        <a href="manageGames.php">Games</a>
         <a href="moderation.php">Moderation</a>
         <a href="search.php">Search</a>
         <a href="logout.php">Logout</a>

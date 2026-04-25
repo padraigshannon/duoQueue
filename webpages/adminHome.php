@@ -47,6 +47,7 @@ $totalReports = $pdo->query("SELECT COUNT(*) FROM reports")->fetchColumn();
 
 <nav>
     <a href="adminHome.php">Home</a>
+    <a href="manageGames.php">Games
     <a href="moderation.php">Moderation</a>
     <a href="search.php">Search</a>
     <a href="logout.php">Logout</a>
@@ -85,6 +86,7 @@ $totalReports = $pdo->query("SELECT COUNT(*) FROM reports")->fetchColumn();
         <div class="home-actions">
             <a href="moderation.php" class="home-btn">Moderate Users</a>
             <a href="search.php" class="home-btn">Search Users</a>
+            <a href="manageGames.php" class="home-btn">Manage Games</a>
         </div>
 
     </div>
