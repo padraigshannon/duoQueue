@@ -39,6 +39,8 @@ if (!empty($query)) {
 <body>
     <nav>
         <a href="adminHome.php">Home</a>
+        <a href="manageGames.php">Games</a>
+        <a href="managePlatforms.php">Platforms</a>
         <a href="moderation.php">Moderation</a>
         <a href="search.php">Search</a>
         <a href="logout.php">Logout</a>
@@ -60,7 +62,7 @@ if (!empty($query)) {
                 <ul style="list-style: none; padding: 0; margin-top: 20px;">
                     <?php foreach ($results as $result): ?>
                         <li style="margin: 10px 0;">
-                            <a href="profilepage.php?user_id=<?= $result['user_id'] ?>" class="link">
+                            <a href="viewProfile.php?user_id=<?= $result['user_id'] ?>" class="link">
                                 <?= htmlspecialchars($result['first_name'] . ' ' . $result['last_name']) ?>
                             </a>
                         </li>
