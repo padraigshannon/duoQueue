@@ -20,11 +20,15 @@ $user_id = $_SESSION['user_id'];
 
 $sql = "
     SELECT m.*,
-       u1.first_name AS user1_first, u1.last_name AS user1_last,
-       u2.first_name AS user2_first, u2.last_name AS user2_last
+    u1.first_name AS user1_first, u1.last_name AS user1_last,
+    u2.first_name AS user2_first, u2.last_name AS user2_last,
+    p1.profile_photo AS user1_photo,
+    p2.profile_photo AS user2_photo
     FROM matches m
     JOIN users u1 ON m.user1_id = u1.user_id
     JOIN users u2 ON m.user2_id = u2.user_id
+    LEFT JOIN user_profiles p1 ON u1.user_id = p1.user_id
+    LEFT JOIN user_profiles p2 ON u2.user_id = p2.user_id
     WHERE m.user1_id = ? OR m.user2_id = ?
 ";
 
@@ -56,6 +60,8 @@ if ($selected_match_id) {
 
 $other_user_id = null;
 $other_user_name = "No Match Selected";
+$other_user_photo = null;
+
 
 if ($selected_match_id) {
     foreach ($matches as $m) {
@@ -63,9 +69,11 @@ if ($selected_match_id) {
             if ($m['user1_id'] == $user_id) {
                 $other_user_id = $m['user2_id'];
                 $other_user_name = $m['user2_first'] . ' ' . $m['user2_last'];
+                $other_user_photo = $m['user2_photo'];
             } else {
                 $other_user_id = $m['user1_id'];
                 $other_user_name = $m['user1_first'] . ' ' . $m['user1_last'];
+                $other_user_photo = $m['user1_photo'];
             }
             break;
         }
@@ -135,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <!-- Messaging Screen -->
                 <div class="chat-area">
                     <div class="chat-header">
-                        <img src="../assets/profile.png" class="profile-pic">
+                        <img src="<?= $other_user_photo ? htmlspecialchars($other_user_photo) : '../assets/profile.png' ?>" class="profile-pic">
                         <span class="username"><?= htmlspecialchars($other_user_name) ?></span>
 
                         <div class="header-buttons">
