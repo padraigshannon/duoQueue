@@ -378,8 +378,6 @@ if (empty($error)) {
                     <?php endif; ?>
 
                     <div class="profile-form-group">
-                        <input type="text" name="location" placeholder="Location" id="locationInput"
-
                             <div class="profile-form-group">
                         <input type="text" name="location" placeholder="Location" id="locationInput"
                             value="<?= htmlspecialchars($profile['location'] ?? '') ?>"
