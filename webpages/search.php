@@ -1,9 +1,9 @@
 <?php
 session_start();
-$host = 'localhost';
-$db   = 'duoqueue_db';
-$user = 'root';
-$pass = '';
+$host = 'sql113.infinityfree.com';
+$db   = 'if0_41396749_duoqueue_db';
+$user = 'if0_41396749';
+$pass = 'VQtMPg6j4SF2';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
