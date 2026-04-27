@@ -185,7 +185,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     <div class="chat-messages">
                         <?php foreach ($messages as $message):
-                            $class = ($message['sender_id'] == $user_id) ? "sent" : "received";
+                            $class = ($message['sender_id'] == $user_id) ? "sent" : "reaceived";
                         ?>
                             <div class = "message <?= $class ?>">
                                 <?= htmlspecialchars($message['message']) ?>
@@ -202,6 +202,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </form>
                         <?php endif; ?>
                     </div>
+
+  <script>
+function loadMessages() {
+    // 1. Get match_id from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const matchId = urlParams.get('match_id');
+
+    if (!matchId) {
+        console.log("No match_id found in URL");
+        return;
+    }
+
+    // 2. Fetch from PHP
+    fetch(`fetch_messages.php?match_id=${matchId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text();
+        })
+        .then(data => {
+            const chatBox = document.querySelector('.chat-messages');
+            if (chatBox) {
+                chatBox.innerHTML = data;
+                // Scroll to bottom
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        })
+        .catch(error => console.error('Error loading messages:', error));
+}
+
+// Run every 3 seconds
+setInterval(loadMessages, 3000);
+// Run once immediately on page load
+loadMessages();
+</script>
 
                 </div>
         </div>
