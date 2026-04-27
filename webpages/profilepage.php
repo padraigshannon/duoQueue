@@ -259,6 +259,15 @@ if (!empty($profile['date_of_birth'])) {
                 </div>
             </div>
         </div>
+        <?php if (!empty($_SESSION['is_admin']) && !$is_own_profile): ?>
+            <div class="row mt-3 mb-3">
+                <div class="col-12 text-center">
+                    <a href="profile.php?user_id=<?= $user_id ?>" class="text-decoration-none">
+                        <button class="btn-arcade btn-arcade-cyan" style="font-size: 10px; padding: 12px 30px;">Edit Profile</button>
+                    </a>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- Photo Gallery Modal -->
