@@ -111,122 +111,118 @@ $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin - Edit User</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - Edit User</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .btn {
-            padding: 10px 15px;
-            background: #00ffff;
-            color: black;
-            text-decoration: none;
-            border-radius: 5px;
-            font-family: 'Press Start 2P', cursive;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .img-box {
-            position: relative;
-        }
-        .img-box img {
-            width: 120px;
-            border-radius: 5px;
-        }
-        .delete-btn {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: red;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
+
 <body>
 
-<nav>
-    <a href="adminHome.php">Home</a>
-    <a href="manageGames.php">Games</a>
-    <a href="managePlatforms.php">Platforms</a>
-    <a href="moderation.php">Moderation</a>
-    <a href="search.php">Search</a>
-    <a href="logout.php">Logout</a>
-</nav>
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <a href="adminHome.php" class="nav-link">Home</a>
+            <a href="manageGames.php" class="nav-link">Games</a>
+            <a href="managePlatforms.php" class="nav-link">Platforms</a>
+            <a href="moderation.php" class="nav-link">Moderation</a>
+            <a href="search.php" class="nav-link">Search</a>
+            <a href="logout.php" class="nav-link">Logout</a>
+        </div>
+    </nav>
 
-<div class="login-box">
+    <div class="arcade-screen px-3">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
 
-    <div class="top-bar">
-        <a href="viewProfile.php?user_id=<?= $user_id ?>" class="btn">← Back</a>
-    </div>
+                <div class="neon-box neon-box-lg p-4">
 
-    <h2>Edit User</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <a href="viewProfile.php?user_id=<?= $user_id ?>" class="btn-arcade btn-arcade-cyan" style="font-size: 10px; padding: 8px 14px;">&lt; Back</a>
+                        <h2 class="text-white mb-0" style="letter-spacing: 2px; font-size: clamp(12px, 1.5vw, 18px);">Edit User</h2>
+                        <div style="width: 80px;"></div>
+                    </div>
 
-    <?php if (!empty($success)): ?>
-        <p style="color: lime;"><?= $success ?></p>
-    <?php endif; ?>
+                    <?php if (!empty($success)): ?>
+                        <p class="arcade-success text-center mb-3"><?= $success ?></p>
+                    <?php endif; ?>
 
-    <form method="POST" enctype="multipart/form-data">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="text-glow mb-1" style="font-size: 10px;">First Name</label>
+                                <input type="text" name="first_name" class="form-control arcade-input" value="<?= htmlspecialchars($user['first_name']) ?>" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-glow mb-1" style="font-size: 10px;">Last Name</label>
+                                <input type="text" name="last_name" class="form-control arcade-input" value="<?= htmlspecialchars($user['last_name']) ?>" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="text-glow mb-1" style="font-size: 10px;">Email</label>
+                                <input type="email" name="email" class="form-control arcade-input" value="<?= htmlspecialchars($user['email']) ?>" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="text-glow mb-1" style="font-size: 10px;">Profile Picture</label>
+                                <input type="file" name="profile_pic" class="form-control arcade-input">
+                            </div>
 
-        <label>First Name</label>
-        <input type="text" name="first_name" value="<?= htmlspecialchars($user['first_name']) ?>" required>
+                            <?php if (!empty($user['profile_photo'])): ?>
+                                <div class="col-12">
+                                    <p class="text-glow mb-1" style="font-size: 10px;">Current:</p>
+                                    <img src="../uploads/profile_photos/<?= htmlspecialchars($user['profile_photo']) ?>"
+                                        class="img-fluid" style="max-width: 120px; border-radius: 8px; border: 2px solid var(--cyan);">
+                                </div>
+                            <?php endif; ?>
 
-        <label>Last Name</label>
-        <input type="text" name="last_name" value="<?= htmlspecialchars($user['last_name']) ?>" required>
+                            <div class="col-12 mt-3">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn-arcade">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
 
-        <label>Email</label>
-        <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+                    <hr style="border-color: rgba(0, 255, 255, 0.2); margin: 25px 0;">
 
-        <label>Profile Picture</label>
-        <input type="file" name="profile_pic">
+                    <h3 class="mb-3" style="font-size: clamp(10px, 1.2vw, 14px);">User Gallery</h3>
 
-        <?php if (!empty($user['profile_photo'])): ?>
-            <p>Current:</p>
-            <img src="../uploads/profile_photos/<?= htmlspecialchars($user['profile_photo']) ?>" width="100">
-        <?php endif; ?>
+                    <?php if (!empty($images)): ?>
+                        <div class="row g-3 mb-4">
+                            <?php foreach ($images as $img): ?>
+                                <div class="col-4 col-md-3">
+                                    <div class="position-relative">
+                                        <img src="../uploads/gallery_photos/<?= htmlspecialchars($img['photo']) ?>"
+                                            class="img-fluid rounded" style="border: 2px solid var(--cyan);">
+                                        <form method="POST" class="position-absolute top-0 end-0">
+                                            <input type="hidden" name="delete_image" value="<?= htmlspecialchars($img['photo']) ?>">
+                                            <button type="submit" class="btn-arcade-danger p-1" style="font-size: 8px; line-height: 1;"
+                                                onclick="return confirm('Delete this photo?');">X</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <p style="font-size: 10px; color: rgba(255,255,255,0.6);">No gallery photos.</p>
+                    <?php endif; ?>
 
-        <br><br>
-        <button type="submit" class="btn">Save Changes</button>
-    </form>
+                    <h4 class="mb-3" style="font-size: clamp(9px, 1vw, 12px);">Add New Images</h4>
 
-    <h3>User Gallery</h3>
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="d-flex flex-column flex-md-row gap-3 align-items-start">
+                            <input type="file" name="gallery_images[]" multiple class="form-control arcade-input flex-fill">
+                            <button type="submit" class="btn-arcade" style="font-size: 10px; white-space: nowrap;">Upload</button>
+                        </div>
+                    </form>
 
-    <div class="gallery">
-        <?php foreach ($images as $img): ?>
-            <div class="img-box">
-                <img src="../uploads/gallery_photos/<?= htmlspecialchars($img['photo']) ?>">
+                </div>
 
-                <form method="POST">
-                    <input type="hidden" name="delete_image" value="<?= htmlspecialchars($img['photo']) ?>">
-                    <button class="delete-btn">X</button>
-                </form>
             </div>
-        <?php endforeach; ?>
+        </div>
     </div>
-
-    <h4>Add New Images</h4>
-
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="gallery_images[]" multiple>
-        <button class="btn">Upload</button>
-    </form>
-
-</div>
 
 </body>
 </html>

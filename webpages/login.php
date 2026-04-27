@@ -73,26 +73,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DuoQueue</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
-<body>
-    <div class="login-box">
-        <h2>Login</h2>
+<body class="d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-11 col-sm-8 col-md-6 col-lg-5">
 
-        <?php if (!empty($error)): ?>
-            <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-        <?php endif; ?>
+                <div class="neon-box neon-box-lg p-4 p-md-5 text-center">
+                    <h2 class="text-white mb-4" style="letter-spacing: 3px;">Login</h2>
 
-        <form action="login.php" method="POST">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-            <a href="register.php" class="link">Sign up</a>
-        </form>
+                    <?php if (!empty($error)): ?>
+                        <p class="arcade-error text-center mb-3"><?= htmlspecialchars($error) ?></p>
+                    <?php endif; ?>
+
+                    <form action="login.php" method="POST">
+                        <div class="mb-3">
+                            <input type="email" name="email" class="form-control arcade-input" placeholder="Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" name="password" class="form-control arcade-input" placeholder="Password" required>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn-arcade">Login</button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="register.php" class="arcade-link">Sign up</a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
 </body>
 </html>

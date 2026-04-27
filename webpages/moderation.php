@@ -39,49 +39,67 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>DuoQueue</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - Moderation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
 
 <body>
 
-    <nav>
-        <a href="adminHome.php">Home</a>
-        <a href="manageGames.php">Games</a>
-        <a href="managePlatforms.php">Platforms</a>
-        <a href="moderation.php">Moderation</a>
-        <a href="search.php">Search</a>
-        <a href="logout.php">Logout</a>
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <a href="adminHome.php" class="nav-link">Home</a>
+            <a href="manageGames.php" class="nav-link">Games</a>
+            <a href="managePlatforms.php" class="nav-link">Platforms</a>
+            <a href="moderation.php" class="nav-link">Moderation</a>
+            <a href="search.php" class="nav-link">Search</a>
+            <a href="logout.php" class="nav-link">Logout</a>
+        </div>
     </nav>
 
-    <div class="content">
-        <div class="matches-container" style="grid-template-columns: 1fr;">
-            <div class="report-short">
-                <?php foreach ($reports as $report):
-                    $reported_username = $report['reported_name'];
-                    $reported_user_id = $report['reported_user_id'];
-                    $reporting_user = $report['reporter_name'];
-                    $reason = $report['reason'];
-                    $date = $report['created_timestamp'];
-                ?>
-                    <div class="report-row">
-                        <img src="../assets/profile.jpg" class="profile-pic">
-                        <div class="report-info">
-                            <span class="username"><?= htmlspecialchars($reported_username) ?></span>
-                            <span class="report-detail">Reported by: <span><?= htmlspecialchars($reporting_user) ?></span></span>
-                            <span class="report-detail">Reason: <span><?= htmlspecialchars($reason) ?></span></span>
-                            <span class="report-detail"><?= htmlspecialchars($date) ?></span>
-                        </div>
-                        <div class="header-buttons">
-                            <a href="report.php?report_id=<?= $report['report_id'] ?>"><button>View Report</button></a>
-                        </div>
+    <div class="arcade-screen px-3">
+        <div class="row justify-content-center">
+            <div class="col-12">
+
+                <div class="card arcade-card">
+                    <div class="card-body p-0" style="max-height: 68vh; overflow-y: auto;">
+
+                        <?php if (empty($reports)): ?>
+                            <p class="text-center text-glow p-4" style="font-size: 10px;">No reports to review.</p>
+                        <?php else: ?>
+                            <?php foreach ($reports as $report):
+                                $reported_username = $report['reported_name'];
+                                $reported_user_id = $report['reported_user_id'];
+                                $reporting_user = $report['reporter_name'];
+                                $reason = $report['reason'];
+                                $date = $report['created_timestamp'];
+                            ?>
+                                <div class="report-row d-flex align-items-center gap-3 px-3">
+                                    <img src="../assets/profile.jpg" class="profile-pic flex-shrink-0">
+                                    <div class="flex-grow-1 d-flex flex-column gap-1">
+                                        <span class="text-glow" style="font-size: clamp(8px, 0.9vw, 11px);"><?= htmlspecialchars($reported_username) ?></span>
+                                        <span class="report-detail">Reported by: <span><?= htmlspecialchars($reporting_user) ?></span></span>
+                                        <span class="report-detail">Reason: <span><?= htmlspecialchars($reason) ?></span></span>
+                                        <span class="report-detail"><?= htmlspecialchars($date) ?></span>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <a href="report.php?report_id=<?= $report['report_id'] ?>" class="text-decoration-none">
+                                            <button class="btn-arcade btn-arcade-cyan" style="font-size: 8px; padding: 8px 12px;">View Report</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
                     </div>
-                <?php endforeach; ?>
-            </div>         
+                </div>
+
+            </div>
         </div>
     </div>
 

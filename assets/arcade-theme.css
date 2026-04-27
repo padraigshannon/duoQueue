@@ -1,0 +1,595 @@
+/* ============================================
+   ARCADE THEME - CSS Variables
+   ============================================ */
+:root {
+    --cyan: #00ffff;
+    --blue: #0088ff;
+    --red: #ff4444;
+    --green: #00ff00;
+    --orange: #ffaa00;
+    --dark-bg: #0a0a1a;
+    --glow-sm: 0 0 4px var(--cyan), 0 0 8px var(--blue);
+    --glow-lg: 0 0 6px var(--cyan), 0 0 12px var(--cyan), 0 0 24px var(--blue);
+    --text-glow: 0 0 .5px var(--cyan), 0 0 1px var(--cyan), 0 0 2px var(--cyan), 0 0 4px var(--blue);
+    --border-glow: 0 0 2px var(--cyan), 0 0 4px var(--cyan), 0 0 8px var(--cyan), 0 0 12px var(--blue);
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+body {
+    margin: 0;
+    background-color: var(--dark-bg);
+    background-image: url("Background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: 'Press Start 2P', cursive;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--cyan); box-shadow: 0 0 5px var(--cyan); }
+::-webkit-scrollbar:horizontal { height: 0; display: none; }
+
+/* ============================================
+   ARCADE SCREEN - Content area constraint
+   ============================================ */
+.arcade-screen {
+    position: fixed;
+    top: 8vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 58vw;
+    height: 82vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-top: 8vh;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--cyan);
+    text-shadow: var(--text-glow);
+    font-family: 'Press Start 2P', cursive;
+}
+
+.text-glow {
+    color: var(--cyan);
+    text-shadow: var(--text-glow);
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+.arcade-nav {
+    position: fixed;
+    top:6vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 58vw;
+    z-index: 200;
+    padding: 10px 0;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.arcade-nav .nav-link {
+    color: var(--cyan);
+    text-shadow: var(--text-glow);
+    font-size: clamp(7px, 1vw, 11px);
+    padding: 6px 12px;
+    transition: all 0.15s ease;
+}
+
+.arcade-nav .nav-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--cyan);
+}
+
+/* ============================================
+   NEON BOX - Reusable bordered container
+   ============================================ */
+.neon-box {
+    background: transparent;
+    border: 3px solid var(--cyan);
+    box-shadow: var(--border-glow);
+    color: #ffffff;
+}
+
+.neon-box-lg {
+    border-width: 5px;
+}
+
+/* ============================================
+   FORM CONTROLS - Bootstrap overrides
+   ============================================ */
+.form-control.arcade-input,
+.form-select.arcade-input {
+    background-color: transparent;
+    border: 1px solid var(--cyan);
+    color: #ffffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    padding: 12px 14px;
+    border-radius: 0;
+}
+
+.form-control.arcade-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-control.arcade-input:focus,
+.form-select.arcade-input:focus {
+    background-color: transparent;
+    border-color: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    color: #ffffff;
+}
+
+.form-control.arcade-input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+textarea.arcade-input {
+    resize: none;
+    line-height: 1.8;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn-arcade {
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-arcade:hover {
+    background: var(--cyan);
+    color: var(--dark-bg);
+    border-color: var(--cyan);
+}
+
+.btn-arcade:active {
+    transform: scale(0.97);
+}
+
+.btn-arcade-cyan {
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+.btn-arcade-cyan:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 8px var(--cyan);
+    color: var(--cyan);
+}
+
+.btn-arcade-danger {
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.btn-arcade-danger:hover {
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 8px var(--red);
+    color: var(--red);
+}
+
+.btn-arcade-like {
+    background: transparent;
+    border: 3px solid var(--green);
+    color: var(--green);
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-shadow: 0 0 4px var(--green);
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+.btn-arcade-like:hover {
+    background: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 16px var(--green);
+}
+
+.btn-arcade-dislike {
+    background: transparent;
+    border: 3px solid var(--red);
+    color: var(--red);
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-shadow: 0 0 4px var(--red);
+    box-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
+}
+
+.btn-arcade-dislike:hover {
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 16px var(--red);
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+.arcade-link {
+    color: var(--cyan);
+    text-decoration: none;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    text-shadow: var(--text-glow);
+    transition: all 0.15s ease;
+}
+
+.arcade-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px var(--cyan);
+}
+
+/* ============================================
+   ALERTS / ERRORS
+   ============================================ */
+.arcade-error {
+    color: var(--red);
+    font-size: 10px;
+    text-shadow: 0 0 4px rgba(255, 68, 68, 0.4);
+}
+
+.arcade-success {
+    color: var(--green);
+    font-size: 10px;
+    text-shadow: 0 0 4px rgba(0, 255, 0, 0.4);
+}
+
+.arcade-alert {
+    border: 2px solid var(--orange);
+    color: var(--orange);
+    font-size: clamp(7px, 0.8vw, 10px);
+}
+
+/* ============================================
+   STAT BOXES (Home page)
+   ============================================ */
+.stat-box {
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    padding: 15px 25px;
+    text-align: center;
+}
+
+.stat-number {
+    color: var(--cyan);
+    font-size: clamp(18px, 2.5vw, 30px);
+    text-shadow: 0 0 4px var(--cyan);
+}
+
+.stat-label {
+    color: #ffffff;
+    font-size: clamp(7px, 0.8vw, 10px);
+}
+
+/* ============================================
+   MATCH CARD (Matchmake page)
+   ============================================ */
+.match-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    background-color: transparent;
+    border: 2px solid var(--cyan);
+    color: #ffffff;
+    border-radius: 10px;
+    text-align: center;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.match-card input,
+.match-card textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid var(--cyan);
+    border-radius: 5px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+}
+
+.match-card textarea {
+    min-height: 100px;
+    resize: none;
+}
+
+.match-notification {
+    background-color: transparent;
+    border: 2px solid var(--green);
+    padding: 15px;
+    text-align: center;
+}
+
+/* ============================================
+   MESSAGING (Matches page)
+   ============================================ */
+.chat-area {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 10px;
+    border-bottom: 3px solid var(--cyan);
+}
+
+.chat-messages {
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    line-height: 1.6;
+    clear: both;
+}
+
+.message.sent {
+    float: right;
+    background: rgba(0, 136, 255, 0.3);
+    border: 1px solid var(--blue);
+    border-radius: 12px 12px 0 12px;
+    text-align: right;
+}
+
+.message.received {
+    float: left;
+    background: rgba(0, 255, 255, 0.15);
+    border: 1px solid var(--cyan);
+    border-radius: 12px 12px 12px 0;
+    text-align: left;
+}
+
+.chat-input {
+    border-top: 3px solid var(--cyan);
+}
+
+.chat-input input {
+    background: transparent;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+    color: white;
+    padding: 10px;
+}
+
+.chat-input input:focus {
+    background: transparent;
+    color: white;
+    box-shadow: none;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    image-rendering: pixelated;
+}
+
+/* ============================================
+   SIDEBAR (Matches page)
+   ============================================ */
+.match-user {
+    display: block;
+    padding: 15px;
+    border-bottom: 2px solid var(--cyan);
+    text-decoration: none;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+}
+
+.match-user:hover {
+    background: rgba(0, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* ============================================
+   REPORTS (Moderation pages)
+   ============================================ */
+.report-row {
+    padding: 12px 15px;
+    border-bottom: 3px solid var(--cyan);
+    color: #ffffff;
+    transition: background 0.15s ease;
+}
+
+.report-row:hover {
+    background: rgba(0, 255, 255, 0.08);
+}
+
+.report-detail {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(6px, 0.7vw, 9px);
+}
+
+.report-detail span {
+    color: var(--orange);
+}
+
+.report-date {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(6px, 0.7vw, 9px);
+}
+
+/* Ban form */
+.ban-form {
+    border-top: 3px solid var(--red);
+    background: rgba(255, 68, 68, 0.05);
+    padding: 15px 20px;
+}
+
+.ban-form label {
+    color: var(--red);
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(7px, 0.8vw, 10px);
+}
+
+.ban-form select,
+.ban-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    background: transparent;
+    border: 2px solid var(--red);
+    color: #ffffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(7px, 0.8vw, 10px);
+    outline: none;
+    resize: none;
+}
+
+.ban-form select option {
+    background: #111;
+    color: #ffffff;
+}
+
+/* ============================================
+   LANDING PAGE
+   ============================================ */
+.landing-logo {
+    width: clamp(200px, 30vw, 420px);
+    image-rendering: pixelated;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.blink {
+    animation: blink 1.5s step-end infinite;
+}
+
+/* ============================================
+   ABOUT US
+   ============================================ */
+.team-image {
+    width: 60%;
+    max-width: 400px;
+    image-rendering: pixelated;
+}
+
+/* ============================================
+   FILTER PANEL (Matchmake page)
+   ============================================ */
+.filter-panel {
+    border: 3px solid var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    padding: 15px;
+    color: #ffffff;
+    font-size: 10px;
+}
+
+.filter-panel h3 {
+    font-size: 10px;
+}
+
+.filter-panel label {
+    display: block;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+/* ============================================
+   BOOTSTRAP OVERRIDES - Dark arcade theme
+   ============================================ */
+.card.arcade-card {
+    background: transparent;
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    color: #ffffff;
+}
+
+.card.arcade-card .card-title {
+    color: var(--cyan);
+    text-shadow: var(--text-glow);
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(10px, 1.2vw, 14px);
+}
+
+.card.arcade-card .card-body {
+    font-size: clamp(8px, 0.9vw, 11px);
+}
+
+.card.arcade-card .card-body p,
+.card.arcade-card .card-body strong {
+    color: #ffffff;
+}
+
+.card.arcade-card .list-group-item {
+    background: transparent;
+    border-color: rgba(0, 255, 255, 0.2);
+    color: #ffffff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(7px, 0.8vw, 10px);
+}
+
+.btn-arcade-gallery {
+    background: transparent;
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(7px, 0.8vw, 10px);
+    padding: 8px 16px;
+    transition: all 0.15s ease;
+}
+
+.btn-arcade-gallery:hover {
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 8px var(--cyan);
+    color: var(--cyan);
+}
+
+/* Modal override */
+.modal-content.arcade-modal {
+    background: var(--dark-bg);
+    border: 3px solid var(--cyan);
+    box-shadow: var(--border-glow);
+    color: #ffffff;
+}
+
+.modal-content.arcade-modal .modal-header {
+    border-bottom: 2px solid var(--cyan);
+}
+
+.modal-content.arcade-modal .modal-title {
+    color: var(--cyan);
+    text-shadow: var(--text-glow);
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(9px, 1vw, 12px);
+}

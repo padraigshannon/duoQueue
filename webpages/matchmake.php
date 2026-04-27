@@ -148,133 +148,153 @@ $stmt->closeCursor();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Matchmake</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - Matchmake</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        .matchmake-wrapper {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            justify-content: center;
-            width: 90%;
-            max-width: 1100px;
-        }
-
-        .filter-panel {
-            width: 200px;
-            border: 3px solid #00ffff;
-            box-shadow: 0 0 8px #00ffff;
-            padding: 15px;
-            color: #ffffff;
-            font-size: 10px;
-            flex-shrink: 0;
-        }
-
-        .filter-panel h3 {
-            margin-bottom: 15px;
-            font-size: 10px;
-        }
-
-        .filter-panel label {
-            display: block;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        .filter-panel input[type="checkbox"] {
-            margin-right: 8px;
-        }
-
-        .filter-panel button {
-            margin-top: 15px;
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            border: 2px solid #ffffff;
-            color: #ffffff;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            cursor: pointer;
-        }
-
-        .filter-panel button:hover {
-            background: #00ccff;
-            color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
 
 <body>
-    <nav>
-        <a href="home.php">Home</a>
-        <a href="profilepage.php">Profile</a>
-        <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duos</a>
-        <a href="search.php">Search</a>
-        <a href="aboutus.php">About Us</a>
-        <a href="logout.php">Logout</a>
+
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <a href="home.php" class="nav-link">Home</a>
+            <a href="profilepage.php" class="nav-link">Profile</a>
+            <a href="matchmake.php" class="nav-link">Matchmake</a>
+            <a href="matches.php" class="nav-link">My Duos</a>
+            <a href="search.php" class="nav-link">Search</a>
+            <a href="aboutus.php" class="nav-link">About Us</a>
+            <a href="logout.php" class="nav-link">Logout</a>
+        </div>
     </nav>
 
-    <div class="content">
+    <div class="arcade-screen px-3">
 
         <?php if (isset($_GET['matched'])): ?>
-            <div class="match-notification">
+            <div class="match-notification text-center mb-3">
                 <h3>It's a Match with <?= htmlspecialchars($_GET['name']) ?>!</h3>
             </div>
         <?php endif; ?>
 
-        <div class="matchmake-wrapper">
+        <?php if ($potentialMatch): ?>
 
-            <!-- Game Filter Panel -->
-            <form method="POST" action="matchmake.php">
-                <div class="filter-panel">
-                    <h3>Exclude Games</h3>
-                    <?php if (empty($userGames)): ?>
-                        <p>No games on your profile yet.</p>
-                    <?php else: ?>
-                        <?php foreach ($userGames as $game): ?>
-                            <label>
-                                <input type="checkbox" name="exclude_games[]"
-                                    value="<?= $game['game_id'] ?>"
-                                    <?= in_array($game['game_id'], $excludedGameIds) ? 'checked' : '' ?>>
-                                <?= htmlspecialchars($game['game_name']) ?>
-                            </label>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    <button type="submit">Apply</button>
-                </div>
-            </form>
-                <!-- Pass like/dislike actions through the same form -->
-                <?php if ($potentialMatch): ?>
-                    <div class="match-card">
-                        <h2>Match Found</h2>
-                        <p>Score: <?= $potentialMatch['match_score'] ?></p>
+            <div class="card arcade-card mb-3">
+                <div class="card-body p-3" style="min-height: 35vh;">
+                    <div class="row g-4">
 
-                        <input type="text" value="<?= htmlspecialchars($potentialMatch['first_name']) ?>" readonly>
-                        <input type="text" value="<?= htmlspecialchars($potentialMatch['location']) ?>" readonly>
-                        <textarea readonly><?= htmlspecialchars($potentialMatch['about_me']) ?></textarea>
-
-                        <div class="match-actions">
-                            <form action="like.php" method="POST">
-                                <input type="hidden" name="liked_user_id" value="<?= $potentialMatch['user_id'] ?>">
-                                <button class="like-button">👍 Like</button>
-                            </form>
-                            <form action="dislike.php" method="POST">
-                                <input type="hidden" name="disliked_user_id" value="<?= $potentialMatch['user_id'] ?>">
-                                <button class="dislike-button">👎 Dislike</button>
-                            </form>
+                        <div class="col-4">
+                            <?php if (!empty($potentialMatch['profile_photo'])): ?>
+                                <img src="<?= htmlspecialchars($potentialMatch['profile_photo']) ?>"
+                                    alt="Profile Photo" class="img-fluid rounded mb-2"
+                                    style="border: 2px solid var(--cyan); max-height: 150px; object-fit: cover;">
+                            <?php else: ?>
+                                <div class="neon-box d-flex align-items-center justify-content-center mb-2"
+                                    style="height: 120px; font-size: 9px; text-align: center;">
+                                    No Photo
+                                </div>
+                            <?php endif; ?>
+                            <p class="text-glow mb-1" style="font-size: clamp(9px, 1vw, 12px);">
+                                <?= htmlspecialchars($potentialMatch['first_name']) ?>
+                            </p>
+                            <p class="mb-0" style="font-size: 9px;">
+                                <?= htmlspecialchars($potentialMatch['gender'] ?? '') ?>
+                            </p>
                         </div>
-                    </div>
-                <?php else: ?>
-                    <div class="match-card">
-                        <h2>No Matches Available</h2>
-                    </div>
-                <?php endif; ?>
 
-        </div>
+                        <div class="col-4">
+                            <h4 class="mb-2" style="font-size: clamp(8px, 0.9vw, 11px);">About Me</h4>
+                            <p style="font-size: 9px; line-height: 1.6; max-height: 140px; overflow-y: auto;">
+                                <?= htmlspecialchars($potentialMatch['about_me'] ?? 'No bio provided.') ?>
+                            </p>
+                        </div>
+
+                        <div class="col-2">
+                            <h4 class="mb-2" style="font-size: clamp(8px, 0.9vw, 11px);">Games</h4>
+                            <?php
+                                $gStmt = $pdo->prepare("SELECT ag.game_name FROM users_games ug JOIN available_games ag ON ug.game_id = ag.game_id WHERE ug.user_id = ? LIMIT 5");
+                                $gStmt->execute([$potentialMatch['user_id']]);
+                                $matchGames = $gStmt->fetchAll(PDO::FETCH_COLUMN);
+                            ?>
+                            <?php if (!empty($matchGames)): ?>
+                                <?php foreach ($matchGames as $g): ?>
+                                    <p class="mb-1" style="font-size: 8px;"><?= htmlspecialchars($g) ?></p>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p style="font-size: 8px;">None listed.</p>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="col-2">
+                            <h4 class="mb-2" style="font-size: clamp(8px, 0.9vw, 11px);">Platforms</h4>
+                            <?php
+                                $pStmt = $pdo->prepare("SELECT ap.platform_name FROM user_platforms up JOIN available_platforms ap ON up.platform_id = ap.platform_id WHERE up.user_id = ?");
+                                $pStmt->execute([$potentialMatch['user_id']]);
+                                $matchPlatforms = $pStmt->fetchAll(PDO::FETCH_COLUMN);
+                            ?>
+                            <?php if (!empty($matchPlatforms)): ?>
+                                <?php foreach ($matchPlatforms as $pl): ?>
+                                    <p class="mb-1" style="font-size: 8px;"><?= htmlspecialchars($pl) ?></p>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p style="font-size: 8px;">None listed.</p>
+                            <?php endif; ?>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 p-3 align-items-start">
+
+                <div class="col-4">
+                    <form method="POST" action="matchmake.php">
+                        <div class="card arcade-card">
+                            <div class="card-body p-3">
+                                <h4 class="mb-2" style="font-size: clamp(8px, 0.9vw, 11px);">Exclude Games</h4>
+                                <?php if (empty($userGames)): ?>
+                                    <p style="font-size: 9px;">No games on your profile yet.</p>
+                                <?php else: ?>
+                                    <?php foreach ($userGames as $game): ?>
+                                        <label class="d-block mb-2" style="font-size: 9px; cursor: pointer;">
+                                            <input type="checkbox" name="exclude_games[]"
+                                                value="<?= $game['game_id'] ?>"
+                                                <?= in_array($game['game_id'], $excludedGameIds) ? 'checked' : '' ?>>
+                                            <?= htmlspecialchars($game['game_name']) ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                                <button type="submit" class="btn-arcade btn-arcade-cyan w-100 mt-2" style="font-size: 9px; padding: 8px;">Apply</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-8 d-flex justify-content-center align-items-center gap-4" style="min-height: 120px;">
+                    <form action="like.php" method="POST">
+                        <input type="hidden" name="liked_user_id" value="<?= $potentialMatch['user_id'] ?>">
+                        <button class="btn-arcade-like px-4 py-3" style="font-size: 12px;">👍 Like</button>
+                    </form>
+                    <form action="dislike.php" method="POST">
+                        <input type="hidden" name="disliked_user_id" value="<?= $potentialMatch['user_id'] ?>">
+                        <button class="btn-arcade-dislike px-4 py-3" style="font-size: 12px;">👎 Dislike</button>
+                    </form>
+                </div>
+
+            </div>
+
+        <?php else: ?>
+            <div class="d-flex align-items-center justify-content-center" style="height: 60vh;">
+                <div class="match-card">
+                    <h2>No Matches Available</h2>
+                </div>
+            </div>
+        <?php endif; ?>
+
     </div>
+
 </body>
 </html>
