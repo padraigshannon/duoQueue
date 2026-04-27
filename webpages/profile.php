@@ -448,7 +448,7 @@ if (empty($error)) {
                                     <input type="text" id="gameSearch" placeholder="Search Games..." class="form-control arcade-input mb-2">
                                     <div id="gamesList" class="neon-box p-2" style="max-height: 180px; overflow-y: auto; font-size: 10px;">
                                         <?php foreach ($allGames as $game): ?>
-                                            <label class="game-option d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;">
+                                            <label class="game-option mb-2" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                                 <span><?= htmlspecialchars($game['game_name']) ?></span>
                                                 <input type="checkbox" name="games[]" value="<?= htmlspecialchars($game['game_id']) ?>"
                                                     <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
@@ -462,7 +462,7 @@ if (empty($error)) {
                                     <input type="text" id="platformSearch" placeholder="Search Platforms..." class="form-control arcade-input mb-2">
                                     <div id="platformsList" class="neon-box p-2" style="max-height: 180px; overflow-y: auto; font-size: 10px;">
                                         <?php foreach ($allPlatforms as $platform): ?>
-                                            <label class="platform-option d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;">
+                                            <label class="platform-option mb-2" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                                                 <span><?= htmlspecialchars($platform['platform_name']) ?></span>
                                                 <input type="checkbox" name="platforms[]" value="<?= htmlspecialchars($platform['platform_id']) ?>"
                                                     <?= in_array($platform['platform_id'], $selectedPlatforms) ? 'checked' : '' ?>>

@@ -109,8 +109,9 @@ $sql = "
 
     WHERE u.user_id <> :uid_exclude
         AND u.is_banned = 0
-        AND (up.gender = seeker.seeking OR seeker.seeking = 'any')
-        AND (seeker.gender = up.seeking OR up.seeking = 'any')
+        AND u.is_admin = 0
+        AND (up.gender = seeker.seeking OR seeker.seeking = 'other')
+        AND (seeker.gender = up.seeking OR up.seeking = 'other')
         AND u.user_id NOT IN (
             SELECT liked_user_id FROM likes WHERE user_id = :uid_likes
         )

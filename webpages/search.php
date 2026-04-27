@@ -17,6 +17,7 @@ try {
     die("Could not connect to the database. Please try again later.");
 }
 
+// Handle ban action
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
@@ -43,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$banned_user_id]);
         }
 
-        header("Location: search.php?query=" . urlencode($query));
+        header("Location: search.php");
         exit;
     }
 }
@@ -55,11 +56,10 @@ $results       = [];
 $query         = trim($_GET['query'] ?? '');
 $selectedGames = array_map('intval', $_GET['filter_games'] ?? []);
 
-
 if (!empty($query) || !empty($selectedGames)) {
     $params = [];
     $sql    = "SELECT DISTINCT u.user_id, u.first_name, u.last_name, u.email, u.is_banned
-           FROM users u";
+               FROM users u";
 
     if (!empty($selectedGames)) {
         $sql .= " JOIN users_games ug ON u.user_id = ug.user_id";
@@ -86,7 +86,6 @@ if (!empty($query) || !empty($selectedGames)) {
     $stmt->execute($params);
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,126 +122,138 @@ if (!empty($query) || !empty($selectedGames)) {
     </nav>
 
     <div class="arcade-screen px-3">
-        <div class="row g-3">
+        <form id="searchForm" method="GET" action="search.php">
+            <div class="row g-3">
 
-            <!-- Game Filter Panel -->
-            <div class="col-4 col-md-3">
-                <div class="card arcade-card">
-                    <div class="card-body p-3">
-                        <h4 class="mb-3" style="font-size: clamp(8px, 0.9vw, 11px);">Filter by Game</h4>
+                <!-- Game Filter Panel -->
+                <div class="col-4 col-md-3">
+                    <div class="card arcade-card">
+                        <div class="card-body p-3">
+                            <h4 class="mb-3" style="font-size: clamp(8px, 0.9vw, 11px);">Filter by Game</h4>
 
-                        <?php if (empty($allGames)): ?>
-                            <p style="font-size: 9px;">No games found.</p>
-                        <?php else: ?>
-                            <input type="text" id="gameSearch" placeholder="Search Games..."
-                                class="form-control arcade-input mb-2" style="font-size: 9px;">
+                            <?php if (empty($allGames)): ?>
+                                <p style="font-size: 9px;">No games found.</p>
+                            <?php else: ?>
+                                <input type="text" id="gameSearch" placeholder="Search Games..."
+                                    class="form-control arcade-input mb-2" style="font-size: 9px;"
+                                    onkeydown="if(event.key==='Enter') event.preventDefault();">
 
-                            <div id="gamesList" class="neon-box p-2" style="max-height: 45vh; overflow-y: auto; font-size: 9px;">
-                                <?php foreach ($allGames as $game): ?>
-                                    <label class="game-option d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;">
-                                        <span><?= htmlspecialchars($game['game_name']) ?></span>
-                                        <input type="checkbox"
-                                            name="filter_games[]"
-                                            value="<?= $game['game_id'] ?>"
-                                            form="searchForm"
-                                            <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
-                                    </label>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
+                                <div id="gamesList" class="neon-box p-2" style="max-height: 45vh; overflow-y: auto; font-size: 9px;">
+                                    <?php foreach ($allGames as $game): ?>
+                                        <label class="game-option mb-2" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                            <span><?= htmlspecialchars($game['game_name']) ?></span>
+                                            <input type="checkbox"
+                                                name="filter_games[]"
+                                                value="<?= $game['game_id'] ?>"
+                                                <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Search Box and Results -->
-            <div class="col-8 col-md-9">
-                <div class="card arcade-card">
-                    <div class="card-body p-3">
-                        <h2 class="card-title text-center mb-3" style="font-size: clamp(12px, 1.3vw, 16px);">User Search</h2>
+                <!-- Search Box and Results -->
+                <div class="col-8 col-md-9">
+                    <div class="card arcade-card">
+                        <div class="card-body p-3">
+                            <h2 class="card-title text-center mb-3" style="font-size: clamp(12px, 1.3vw, 16px);">User Search</h2>
 
-                        <form id="searchForm" method="GET" action="search.php">
                             <div class="d-flex gap-2">
                                 <input type="text" name="query" placeholder="Search by name..."
                                     class="form-control arcade-input flex-fill"
                                     value="<?= htmlspecialchars($query) ?>">
                                 <button type="submit" class="btn-arcade btn-arcade-cyan" style="font-size: 10px; white-space: nowrap; padding: 10px 16px;">Search</button>
                             </div>
-                        </form>
 
-                        <?php if (!empty($query) || !empty($selectedGames)): ?>
-                            <?php if (empty($results)): ?>
-                                <p class="text-glow text-center mt-4" style="font-size: 10px;">No users found.</p>
-                            <?php else: ?>
-                                <div class="mt-3">
-                                    <?php foreach ($results as $result): ?>
-                                        <div class="d-flex justify-content-between align-items-center py-2 px-3 mb-2"
-                                            style="border-bottom: 1px solid rgba(0, 255, 255, 0.2);">
-                                            <a href="profilepage.php?user_id=<?= $result['user_id'] ?>" class="arcade-link">
-                                                <?= htmlspecialchars($result['first_name'] . ' ' . $result['last_name']) ?>
-                                            </a>
-                                            <?php if (!empty($_SESSION['is_admin']) && $result['user_id'] != $_SESSION['user_id']): ?>
-                                                <?php if ($result['is_banned']): ?>
-                                                    <button class="btn-arcade" style="font-size: 8px; padding: 4px 10px; opacity: 0.5; cursor: default; border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3);" disabled>
-                                                        Banned
-                                                    </button>
-                                                <?php else: ?>
-                                                    <button class="btn-arcade btn-arcade-danger" style="font-size: 8px; padding: 4px 10px;"
-                                                        onclick="document.getElementById('ban-form-<?= $result['user_id'] ?>').style.display='flex'">
-                                                        Ban
-                                                    </button>
+                            <?php if (!empty($query) || !empty($selectedGames)): ?>
+                                <?php if (empty($results)): ?>
+                                    <p class="text-glow text-center mt-4" style="font-size: 10px;">No users found.</p>
+                                <?php else: ?>
+                                    <div class="mt-3">
+                                        <?php foreach ($results as $result): ?>
+                                            <div class="d-flex justify-content-between align-items-center py-2 px-3 mb-2"
+                                                style="border-bottom: 1px solid rgba(0, 255, 255, 0.2);">
+                                                <a href="profilepage.php?user_id=<?= $result['user_id'] ?>" class="arcade-link">
+                                                    <?= htmlspecialchars($result['first_name'] . ' ' . $result['last_name']) ?>
+                                                </a>
+                                                <?php if (!empty($_SESSION['is_admin']) && $result['user_id'] != $_SESSION['user_id']): ?>
+                                                    <?php if ($result['is_banned']): ?>
+                                                        <button type="button" class="btn-arcade" style="font-size: 8px; padding: 4px 10px; opacity: 0.5; cursor: default; border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3);" disabled>
+                                                            Banned
+                                                        </button>
+                                                    <?php else: ?>
+                                                        <button type="button" class="btn-arcade btn-arcade-danger" style="font-size: 8px; padding: 4px 10px;"
+                                                            onclick="document.getElementById('ban-form-<?= $result['user_id'] ?>').style.display='flex'">
+                                                            Ban
+                                                        </button>
+                                                    <?php endif; ?>
                                                 <?php endif; ?>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <?php if (!empty($_SESSION['is_admin']) && $result['user_id'] != $_SESSION['user_id'] && !$result['is_banned']): ?>
-                                            <div id="ban-form-<?= $result['user_id'] ?>" class="ban-form" style="display: none;">
-                                                <form method="POST" class="d-flex flex-column gap-2">
-                                                    <input type="hidden" name="action" value="ban_user">
-                                                    <input type="hidden" name="ban_user_id" value="<?= $result['user_id'] ?>">
-
-                                                    <label>Ban duration:</label>
-                                                    <select name="ban_duration" class="form-select arcade-input" required>
-                                                        <option value="1">1 day</option>
-                                                        <option value="7">7 days</option>
-                                                        <option value="30">30 days</option>
-                                                        <option value="365">1 year</option>
-                                                        <option value="36500">Permanent</option>
-                                                    </select>
-
-                                                    <label>Ban reason:</label>
-                                                    <textarea name="ban_reason" rows="3" required
-                                                        class="form-control arcade-input"
-                                                        placeholder="Reason for ban..."></textarea>
-
-                                                    <div class="d-flex justify-content-center gap-3 mt-2">
-                                                        <button type="submit" class="btn-arcade btn-arcade-danger" style="font-size: 9px; padding: 8px 20px;">Confirm Ban</button>
-                                                        <button type="button" class="btn-arcade btn-arcade-cyan" style="font-size: 9px; padding: 8px 20px;"
-                                                            onclick="document.getElementById('ban-form-<?= $result['user_id'] ?>').style.display='none'">Cancel</button>
-                                                    </div>
-                                                </form>
                                             </div>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
                             <?php endif; ?>
-                        <?php endif; ?>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
+        </form>
+
+        <!-- Ban forms outside the search form -->
+        <?php if (!empty($results)): ?>
+            <?php foreach ($results as $result): ?>
+                <?php if (!empty($_SESSION['is_admin']) && $result['user_id'] != $_SESSION['user_id'] && !$result['is_banned']): ?>
+                    <div id="ban-form-<?= $result['user_id'] ?>" class="ban-form" style="display: none;">
+                        <form method="POST" class="d-flex flex-column gap-2">
+                            <input type="hidden" name="action" value="ban_user">
+                            <input type="hidden" name="ban_user_id" value="<?= $result['user_id'] ?>">
+
+                            <label>Ban duration:</label>
+                            <select name="ban_duration" class="form-select arcade-input" required>
+                                <option value="1">1 day</option>
+                                <option value="7">7 days</option>
+                                <option value="30">30 days</option>
+                                <option value="365">1 year</option>
+                                <option value="36500">Permanent</option>
+                            </select>
+
+                            <label>Ban reason:</label>
+                            <textarea name="ban_reason" rows="3" required
+                                class="form-control arcade-input"
+                                placeholder="Reason for ban..."></textarea>
+
+                            <div class="d-flex justify-content-center gap-3 mt-2">
+                                <button type="submit" class="btn-arcade btn-arcade-danger" style="font-size: 9px; padding: 8px 20px;">Confirm Ban</button>
+                                <button type="button" class="btn-arcade btn-arcade-cyan" style="font-size: 9px; padding: 8px 20px;"
+                                    onclick="document.getElementById('ban-form-<?= $result['user_id'] ?>').style.display='none'">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 
     <script>
-        const gameSearch = document.getElementById("gameSearch");
-        const gameOptions = document.querySelectorAll("#gamesList .game-option");
+        document.addEventListener("DOMContentLoaded", function() {
+            var gameSearch = document.getElementById("gameSearch");
+            var gameOptions = document.querySelectorAll("#gamesList .game-option");
 
-        gameSearch.addEventListener("input", function() {
-            const search = this.value.toLowerCase();
-            gameOptions.forEach(option => {
-                const text = option.textContent.toLowerCase();
-                option.style.display = text.includes(search) ? "flex" : "none";
-            });
+            if (gameSearch) {
+                gameSearch.addEventListener("keyup", function() {
+                    var search = this.value.toLowerCase();
+                    for (var i = 0; i < gameOptions.length; i++) {
+                        var span = gameOptions[i].querySelector("span");
+                        if (span) {
+                            var text = span.textContent.toLowerCase();
+                            gameOptions[i].style.display = text.indexOf(search) > -1 ? "flex" : "none";
+                        }
+                    }
+                });
+            }
         });
     </script>
 
