@@ -17,6 +17,37 @@ try {
     die("Could not connect to the database. Please try again later.");
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'ban_user' && !empty($_SESSION['is_admin'])) {
+        $banned_user_id = (int)($_POST['ban_user_id'] ?? 0);
+        $ban_duration = (int)($_POST['ban_duration'] ?? 30);
+        $ban_reason = trim($_POST['ban_reason'] ?? 'Banned by admin from search.');
+        $admin_id = $_SESSION['user_id'];
+
+        if ($banned_user_id && $banned_user_id !== $admin_id) {
+            $stmt = $pdo->prepare("
+                INSERT INTO banned (user_id, admin_id, reason, ban_duration)
+                VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                    admin_id = VALUES(admin_id),
+                    reason = VALUES(reason),
+                    ban_duration = VALUES(ban_duration),
+                    created_timestamp = CURRENT_TIMESTAMP,
+                    deleted_timestamp = NULL
+            ");
+            $stmt->execute([$banned_user_id, $admin_id, $ban_reason, $ban_duration]);
+
+            $stmt = $pdo->prepare("UPDATE users SET is_banned = TRUE WHERE user_id = ?");
+            $stmt->execute([$banned_user_id]);
+        }
+
+        header("Location: search.php?query=" . urlencode($query));
+        exit;
+    }
+}
+
 $gamesStmt = $pdo->query("SELECT game_id, game_name FROM available_games ORDER BY game_name");
 $allGames  = $gamesStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -24,10 +55,11 @@ $results       = [];
 $query         = trim($_GET['query'] ?? '');
 $selectedGames = array_map('intval', $_GET['filter_games'] ?? []);
 
+
 if (!empty($query) || !empty($selectedGames)) {
     $params = [];
-    $sql    = "SELECT DISTINCT u.user_id, u.first_name, u.last_name, u.email
-               FROM users u";
+    $sql    = "SELECT DISTINCT u.user_id, u.first_name, u.last_name, u.email, u.is_banned
+           FROM users u";
 
     if (!empty($selectedGames)) {
         $sql .= " JOIN users_games ug ON u.user_id = ug.user_id";
@@ -54,6 +86,7 @@ if (!empty($query) || !empty($selectedGames)) {
     $stmt->execute($params);
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -142,11 +175,53 @@ if (!empty($query) || !empty($selectedGames)) {
                             <?php else: ?>
                                 <div class="mt-3">
                                     <?php foreach ($results as $result): ?>
-                                        <a href="profilepage.php?user_id=<?= $result['user_id'] ?>"
-                                            class="d-block arcade-link py-2 px-3 mb-2"
+                                        <div class="d-flex justify-content-between align-items-center py-2 px-3 mb-2"
                                             style="border-bottom: 1px solid rgba(0, 255, 255, 0.2);">
-                                            <?= htmlspecialchars($result['first_name'] . ' ' . $result['last_name']) ?>
-                                        </a>
+                                            <a href="profilepage.php?user_id=<?= $result['user_id'] ?>" class="arcade-link">
+                                                <?= htmlspecialchars($result['first_name'] . ' ' . $result['last_name']) ?>
+                                            </a>
+                                            <?php if (!empty($_SESSION['is_admin']) && $result['user_id'] != $_SESSION['user_id']): ?>
+                                                <?php if ($result['is_banned']): ?>
+                                                    <button class="btn-arcade" style="font-size: 8px; padding: 4px 10px; opacity: 0.5; cursor: default; border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.3);" disabled>
+                                                        Banned
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button class="btn-arcade btn-arcade-danger" style="font-size: 8px; padding: 4px 10px;"
+                                                        onclick="document.getElementById('ban-form-<?= $result['user_id'] ?>').style.display='flex'">
+                                                        Ban
+                                                    </button>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <?php if (!empty($_SESSION['is_admin']) && $result['user_id'] != $_SESSION['user_id'] && !$result['is_banned']): ?>
+                                            <div id="ban-form-<?= $result['user_id'] ?>" class="ban-form" style="display: none;">
+                                                <form method="POST" class="d-flex flex-column gap-2">
+                                                    <input type="hidden" name="action" value="ban_user">
+                                                    <input type="hidden" name="ban_user_id" value="<?= $result['user_id'] ?>">
+
+                                                    <label>Ban duration:</label>
+                                                    <select name="ban_duration" class="form-select arcade-input" required>
+                                                        <option value="1">1 day</option>
+                                                        <option value="7">7 days</option>
+                                                        <option value="30">30 days</option>
+                                                        <option value="365">1 year</option>
+                                                        <option value="36500">Permanent</option>
+                                                    </select>
+
+                                                    <label>Ban reason:</label>
+                                                    <textarea name="ban_reason" rows="3" required
+                                                        class="form-control arcade-input"
+                                                        placeholder="Reason for ban..."></textarea>
+
+                                                    <div class="d-flex justify-content-center gap-3 mt-2">
+                                                        <button type="submit" class="btn-arcade btn-arcade-danger" style="font-size: 9px; padding: 8px 20px;">Confirm Ban</button>
+                                                        <button type="button" class="btn-arcade btn-arcade-cyan" style="font-size: 9px; padding: 8px 20px;"
+                                                            onclick="document.getElementById('ban-form-<?= $result['user_id'] ?>').style.display='none'">Cancel</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        <?php endif; ?>
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>

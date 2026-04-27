@@ -21,7 +21,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$userId  = $_SESSION['user_id'];
+if (!empty($_SESSION['is_admin']) && isset($_GET['user_id'])) {
+    $userId = (int)$_GET['user_id'];
+} else {
+    $userId = $_SESSION['user_id'];
+}
 $success = "";
 $error   = "";
 
