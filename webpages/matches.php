@@ -101,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ? $match['user2_id']
         : $match['user1_id'];
 
-    
+
     $stmt = $pdo->prepare("
         INSERT INTO messages (match_id, message, sender_id, receiver_id)
         VALUES (?, ?, ?, ?)
@@ -111,6 +111,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Location: matches.php?match_id=" . $match_id);
     exit;
 }
+$messageError = $_SESSION['error'] ?? "";
+unset($_SESSION['error']);
+
 
 ?>
 
@@ -125,89 +128,110 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <body>
 
-        <nav>
-            <a href="home.php">Home</a>
-            <a href="profilepage.php">Profile</a>
-            <a href="matchmake.php">Matchmake</a>
-            <a href="matches.php">My Duos</a>
-            <a href="search.php">Search</a>
-            <a href="aboutus.php">About Us</a>
-            <a href="logout.php">Logout</a>
-        </nav>
+    <nav>
+        <a href="home.php">Home</a>
+        <a href="profilepage.php">Profile</a>
+        <a href="matchmake.php">Matchmake</a>
+        <a href="matches.php">My Duos</a>
+        <a href="search.php">Search</a>
+        <a href="aboutus.php">About Us</a>
+        <a href="logout.php">Logout</a>
+    </nav>
 
     <div class="content">
         <div class="matches-container">
 
-        <!-- Messaging Sidebar (Matched User Display) -->
-                <div class="matches-sidebar">
-                    <?php foreach ($matches as $match):
-                        $sidebar_name = ($match['user1_id'] == $user_id) 
-                            ? $match['user2_first'] . ' ' . $match['user2_last']
-                            : $match['user1_first'] . ' ' . $match['user1_last'];
-                    ?>
-                        <a href="matches.php?match_id=<?= $match['match_id'] ?>" class="match-user">
-                            <?= $sidebar_name ?>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-        <!-- Messaging Screen -->
-                <div class="chat-area">
-                    <div class="chat-header">
-                        <img src="<?= $other_user_photo ? htmlspecialchars($other_user_photo) : '../assets/profile.png' ?>" class="profile-pic">
-                        <span class="username"><?= htmlspecialchars($other_user_name) ?></span>
+            <!-- Messaging Sidebar (Matched User Display) -->
+            <div class="matches-sidebar">
+                <?php foreach ($matches as $match):
+                    $sidebar_name = ($match['user1_id'] == $user_id)
+                        ? $match['user2_first'] . ' ' . $match['user2_last']
+                        : $match['user1_first'] . ' ' . $match['user1_last'];
+                ?>
+                    <a href="matches.php?match_id=<?= $match['match_id'] ?>" class="match-user">
+                        <?= $sidebar_name ?>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+            <!-- Messaging Screen -->
+            <div class="chat-area">
+                <div class="chat-header">
+                    <img src="<?= $other_user_photo ? htmlspecialchars($other_user_photo) : '../assets/profile.png' ?>" class="profile-pic">
+                    <span class="username"><?= htmlspecialchars($other_user_name) ?></span>
 
-                        <div class="header-buttons">
-                            <?php if ($selected_match_id && $other_user_id): ?>
-                                <a href="profilepage.php?user_id=<?= $other_user_id ?>">
-                                    <button>View Profile</button>
-                                </a>
-                                <form action="unmatch.php" method="POST" 
-                                    onsubmit="return confirm('Are you sure you want to unmatch?');" 
-                                    style="display:inline;">
-                                    <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
-                                    <button type="submit" class="danger">Unmatch</button>
-                                </form>
-                                <a href="reportForm.php?user_id=<?= $other_user_id ?>">
-                                    <button class="danger">Report</button>
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <?php if (isset($_SESSION['error'])): ?>
-        <p style="color:red; text-align:center; margin:10px;">
-            <?php 
-            echo $_SESSION['error']; 
-            unset($_SESSION['error']);
-            ?>
-        </p>
-    <?php endif; ?>
-
-                    <div class="chat-messages">
-                        <?php foreach ($messages as $message):
-                            $class = ($message['sender_id'] == $user_id) ? "sent" : "received";
-                        ?>
-                            <div class = "message <?= $class ?>">
-                                <?= htmlspecialchars($message['message']) ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <div class="chat-input">
-                        <?php if ($selected_match_id): ?>
-                            <form method="POST" style="display:flex; width:100%;">
+                    <div class="header-buttons">
+                        <?php if ($selected_match_id && $other_user_id): ?>
+                            <a href="profilepage.php?user_id=<?= $other_user_id ?>">
+                                <button>View Profile</button>
+                            </a>
+                            <form action="unmatch.php" method="POST"
+                                onsubmit="return confirm('Are you sure you want to unmatch?');"
+                                style="display:inline;">
                                 <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
-                                <input type="text" name="message" placeholder="Type message..." required>
-                                <button type="submit">Send</button>
-                        </form>
+                                <button type="submit" class="danger">Unmatch</button>
+                            </form>
+                            <a href="reportForm.php?user_id=<?= $other_user_id ?>">
+                                <button class="danger">Report</button>
+                            </a>
                         <?php endif; ?>
                     </div>
+                </div>
+
+                <?php if (isset($_SESSION['error'])): ?>
+                    <p style="color:red; text-align:center; margin:10px;">
+                        <?php
+                        echo $_SESSION['error'];
+                        unset($_SESSION['error']);
+                        ?>
+                    </p>
+                <?php endif; ?>
+
+                <div class="chat-messages">
+                    <?php foreach ($messages as $message):
+                        $class = ($message['sender_id'] == $user_id) ? "sent" : "received";
+                    ?>
+                        <div class="message <?= $class ?>">
+                            <?= htmlspecialchars($message['message']) ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="chat-input" style="display:flex; flex-direction:column; width:100%;">
+
+                    <?php if (isset($_SESSION['error'])): ?>
+                        <p style="color:red; margin:0 0 10px 0; text-align:center;">
+                            <?php
+                            echo htmlspecialchars($_SESSION['error']);
+                            unset($_SESSION['error']);
+                            ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if ($selected_match_id): ?>
+                        <form method="POST" style="display:flex; width:100%;">
+                            <input type="hidden" name="match_id" value="<?= htmlspecialchars($selected_match_id) ?>">
+                            <input
+                                type="text"
+                                name="message"
+                                class="<?= !empty($messageError) ? 'input-error' : '' ?>"
+                                placeholder="<?= htmlspecialchars($messageError ?: 'Type message...') ?>"
+                                required>
+
+                            <button type="submit">Send</button>
+                        </form>
+                    <?php endif; ?>
 
                 </div>
+
+
+
+
+            </div>
         </div>
     </div>
 
-    
+
 
 </body>
+
 </html>
