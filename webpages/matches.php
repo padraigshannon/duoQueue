@@ -84,6 +84,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $match_id = $_POST['match_id'];
     $message = $_POST['message'];
 
+    $normalized = preg_replace('/[\s\-()]/', '', $message);
+
+
+    if (preg_match('/(\+?\d{1,3})?\d{9,}/', $normalized)) {
+        $_SESSION['error'] = "Sharing phone numbers is not allowed.";
+        header("Location: matches.php?match_id=" . $match_id);
+        exit;
+    }
+
     $stmt = $pdo->prepare("SELECT user1_id, user2_id FROM matches WHERE match_id = ?");
     $stmt->execute([$match_id]);
     $match = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -164,6 +173,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <?php endif; ?>
                         </div>
                     </div>
+
+                    <?php if (isset($_SESSION['error'])): ?>
+        <p style="color:red; text-align:center; margin:10px;">
+            <?php 
+            echo $_SESSION['error']; 
+            unset($_SESSION['error']);
+            ?>
+        </p>
+    <?php endif; ?>
 
                     <div class="chat-messages">
                         <?php foreach ($messages as $message):
