@@ -70,45 +70,81 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manage Games</title>
-    <link rel="stylesheet" href="../assets/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - Manage Games</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
+
 <body>
- <nav>
-        <a href="adminHome.php">Home</a>
-        <a href="manageGames.php">Games</a>
-        <a href="managePlatforms.php">Platforms</a>
-        <a href="moderation.php">Moderation</a>
-        <a href="search.php">Search</a>
-        <a href="logout.php">Logout</a>
+
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <a href="adminHome.php" class="nav-link">Home</a>
+            <a href="manageGames.php" class="nav-link">Games</a>
+            <a href="managePlatforms.php" class="nav-link">Platforms</a>
+            <a href="moderation.php" class="nav-link">Moderation</a>
+            <a href="search.php" class="nav-link">Search</a>
+            <a href="logout.php" class="nav-link">Logout</a>
+        </div>
     </nav>
-<h1>Manage Games</h1>
 
-<!-- Add Game Form -->
-<form method="POST">
-    <input type="text" name="game_name" placeholder="Enter game name" required>
-    <button type="submit" name="add_game">Add Game</button>
-</form>
+    <div class="arcade-screen px-3">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
 
-<?php if (isset($message)) echo "<p>$message</p>"; ?>
+                <div class="card arcade-card mb-3">
+                    <div class="card-body p-4">
+                        <h2 class="card-title text-center mb-4" style="font-size: clamp(12px, 1.3vw, 16px);">Manage Games</h2>
 
-<h2>Available Games</h2>
+                        <form method="POST">
+                            <div class="d-flex gap-2">
+                                <input type="text" name="game_name" placeholder="Enter game name"
+                                    class="form-control arcade-input flex-fill" required>
+                                <button type="submit" name="add_game" class="btn-arcade btn-arcade-cyan"
+                                    style="font-size: 10px; white-space: nowrap; padding: 10px 16px;">Add Game</button>
+                            </div>
+                        </form>
 
-<ul>
-    <?php foreach ($games as $game): ?>
-        <li>
-            <?php echo htmlspecialchars($game['game_name']); ?>
-            <a href="?delete=<?php echo $game['game_id']; ?>" 
-               onclick="return confirm('Delete this game?');">
-               Remove
-            </a>
-        </li>
-    <?php endforeach; ?>
-</ul>
+                        <?php if (isset($_SESSION['message'])): ?>
+                            <p class="arcade-success text-center mt-3"><?= htmlspecialchars($_SESSION['message']) ?></p>
+                            <?php unset($_SESSION['message']); ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="card arcade-card">
+                    <div class="card-body p-4">
+                        <h3 class="card-title mb-3" style="font-size: clamp(10px, 1.1vw, 13px);">Available Games</h3>
+
+                        <?php if (empty($games)): ?>
+                            <p style="font-size: 10px; color: rgba(255,255,255,0.6);">No games added yet.</p>
+                        <?php else: ?>
+                            <div class="neon-box p-2" style="max-height: 45vh; overflow-y: auto;">
+                                <?php foreach ($games as $game): ?>
+                                    <div class="d-flex justify-content-between align-items-center py-2 px-2"
+                                        style="border-bottom: 1px solid rgba(0, 255, 255, 0.2); font-size: 10px;">
+                                        <span><?= htmlspecialchars($game['game_name']) ?></span>
+                                        <a href="?delete=<?= $game['game_id'] ?>"
+                                            class="btn-arcade btn-arcade-danger"
+                                            style="font-size: 8px; padding: 4px 10px; text-decoration: none;"
+                                            onclick="return confirm('Delete this game?');">
+                                            Remove
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>

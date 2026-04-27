@@ -60,36 +60,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <title>DuoQueue - Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
+<body class="d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-11 col-sm-8 col-md-6 col-lg-5">
 
-<body>
-    <div class="login-box">
-        <h2>Register</h2>
-        <?php if (!empty($error)): ?>
-            <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-        <?php endif; ?>
-        <?php if (!empty($success)): ?>
-            <p style="color: lightgreen;"><?= htmlspecialchars($success) ?></p>
-        <?php endif; ?>
-        <form method="POST" action="">
-            <input type="text" name="first_name" placeholder="First Name" required>
-            <input type="text" name="last_name" placeholder="Last Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="repeat_password" placeholder="Repeat Password" required>
-            <button type="submit">Create my account</button>
-            <a href="login.php" class="link">Already have an Account?</a>
-        </form>
+                <div class="neon-box neon-box-lg p-4 p-md-5 text-center">
+                    <h2 class="text-white mb-4" style="letter-spacing: 3px;">Register</h2>
+
+                    <?php if (!empty($error)): ?>
+                        <p class="arcade-error text-center mb-3"><?= htmlspecialchars($error) ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($success)): ?>
+                        <p class="arcade-success text-center mb-3"><?= htmlspecialchars($success) ?></p>
+                    <?php endif; ?>
+
+                    <form method="POST" action="">
+                        <div class="mb-3">
+                            <input type="text" name="first_name" class="form-control arcade-input" placeholder="First Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="last_name" class="form-control arcade-input" placeholder="Last Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" name="email" class="form-control arcade-input" placeholder="Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" name="password" class="form-control arcade-input" placeholder="Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" name="repeat_password" class="form-control arcade-input" placeholder="Repeat Password" required>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn-arcade">Create my account</button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="login.php" class="arcade-link">Log in</a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
     </div>
-
 </body>
-
 </html>

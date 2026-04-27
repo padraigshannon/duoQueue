@@ -295,176 +295,211 @@ if (empty($error)) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $isNewProfile ? 'Set Up Profile' : 'Edit Profile' ?></title>
-    <link rel="stylesheet" href="../assets/arcade.css">
-    <link rel="stylesheet" href="../assets/editProfile.css">
+    <title>DuoQueue - <?= $isNewProfile ? 'Set Up Profile' : 'Edit Profile' ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
 
 <body>
 
-    <nav>
-        <a href="home.php">Home</a>
-        <a href="profilepage.php">Profile</a>
-        <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duos</a>
-        <a href="search.php">Search</a>
-        <a href="aboutus.php">About Us</a>
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <a href="home.php" class="nav-link">Home</a>
+            <a href="profilepage.php" class="nav-link">Profile</a>
+            <a href="matchmake.php" class="nav-link">Matchmake</a>
+            <a href="matches.php" class="nav-link">My Duos</a>
+            <a href="search.php" class="nav-link">Search</a>
+            <a href="aboutus.php" class="nav-link">About Us</a>
+        </div>
     </nav>
 
-    <div class="content">
-        <div class="profile-main-container">
+    <div class="arcade-screen px-3">
+        <div class="row g-4">
 
-            <div class="profile-preview">
-                <img src="<?= htmlspecialchars($currentPhoto) ?>"
-                    id="profileImage"
-                    style="width:150px; height:150px; object-fit:cover; border-radius:25%;">
-                <h2><?= htmlspecialchars($userData['first_name'] . ' ' . $userData['last_name']) ?></h2>
-                <p id="previewGender"><?= htmlspecialchars($profile['gender'] ?? 'Gender') ?></p>
-                <p id="previewLocation"><?= htmlspecialchars($profile['location'] ?? 'Location') ?></p>
-                <p id="previewOrientation">Seeking: <?= htmlspecialchars($profile['seeking'] ?? '') ?></p>
-                <p id="previewGames">Favorite Games: <?= htmlspecialchars(!empty($selectedGameNames) ? implode(', ', $selectedGameNames) : '') ?></p>
-                <p id="previewPlatforms">Platforms: <?= htmlspecialchars(!empty($selectedPlatformNames) ? implode(', ', $selectedPlatformNames) : '') ?></p>
-                <p id="previewBio"><?= htmlspecialchars($profile['about_me'] ?? 'Your bio will appear here...') ?></p>
+            <!-- Preview Panel -->
+            <div class="col-lg-4">
+                <div class="card arcade-card mb-4">
+                    <div class="card-body text-center">
+                        <img src="<?= htmlspecialchars($currentPhoto) ?>"
+                            id="profileImage"
+                            class="img-fluid mb-3"
+                            style="width: 150px; height: 150px; object-fit: cover; border-radius: 25%; border: 2px solid var(--cyan);">
+                        <h2 class="card-title" style="font-size: clamp(10px, 1.2vw, 14px);">
+                            <?= htmlspecialchars($userData['first_name'] . ' ' . $userData['last_name']) ?>
+                        </h2>
+                        <p class="mb-1" style="font-size: 10px;" id="previewGender"><?= htmlspecialchars($profile['gender'] ?? 'Gender') ?></p>
+                        <p class="mb-1" style="font-size: 10px;" id="previewLocation"><?= htmlspecialchars($profile['location'] ?? 'Location') ?></p>
+                        <p class="mb-1" style="font-size: 10px;" id="previewOrientation">Seeking: <?= htmlspecialchars($profile['seeking'] ?? '') ?></p>
+                        <p class="mb-1" style="font-size: 10px;" id="previewGames">Favorite Games: <?= htmlspecialchars(!empty($selectedGameNames) ? implode(', ', $selectedGameNames) : '') ?></p>
+                        <p class="mb-1" style="font-size: 10px;" id="previewPlatforms">Platforms: <?= htmlspecialchars(!empty($selectedPlatformNames) ? implode(', ', $selectedPlatformNames) : '') ?></p>
+                        <p class="mb-0" style="font-size: 10px;" id="previewBio"><?= htmlspecialchars($profile['about_me'] ?? 'Your bio will appear here...') ?></p>
+                    </div>
+                </div>
             </div>
 
-            <div class="profile-form-section">
-                <h2><?= $isNewProfile ? 'Set Up Your Profile' : 'Edit Profile' ?></h2>
+            <!-- Form Panel -->
+            <div class="col-lg-8">
+                <div class="card arcade-card mb-4">
+                    <div class="card-body">
 
-                <?php if ($isNewProfile): ?>
-                    <p class="profile-notice">Welcome! Please fill in all fields to get started.</p>
-                <?php endif; ?>
+                        <h2 class="card-title mb-3" style="font-size: clamp(10px, 1.2vw, 14px);">
+                            <?= $isNewProfile ? 'Set Up Your Profile' : 'Edit Profile' ?>
+                        </h2>
 
-                <?php if (!empty($success)): ?>
-                    <p style="color: lightgreen;"><?= htmlspecialchars($success) ?></p>
-                <?php endif; ?>
-                <?php if (!empty($error)): ?>
-                    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-                <?php endif; ?>
+                        <?php if ($isNewProfile): ?>
+                            <p class="arcade-alert text-center p-2 mb-3">Welcome! Please fill in all fields to get started.</p>
+                        <?php endif; ?>
 
-                <form method="POST" enctype="multipart/form-data">
+                        <?php if (!empty($success)): ?>
+                            <p class="arcade-success text-center mb-3"><?= htmlspecialchars($success) ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($error)): ?>
+                            <p class="arcade-error text-center mb-3"><?= htmlspecialchars($error) ?></p>
+                        <?php endif; ?>
 
-                    <div class="profile-form-group">
-                        <label>Profile Photo:</label>
-                        <input type="file" name="profile_photo" accept="image/*" id="photoInput">
-                    </div>
+                        <form method="POST" enctype="multipart/form-data">
 
-                    <div class="profile-form-group">
-                        <label>Photo Gallery:</label>
-                        <input type="file" name="gallery_photos[]" accept="image/*" id="galleryInput" multiple>
-                    </div>
+                            <div class="row g-3">
 
-                    <?php if (!empty($existingGalleryPhotos)): ?>
-                        <div class="profile-form-group">
-                            <label>Current Gallery Photos:</label>
-                            <div style="display:flex; flex-wrap:wrap; gap:15px;">
-                                <?php foreach ($existingGalleryPhotos as $galleryPhoto): ?>
-                                    <div style="text-align:center;">
-                                        <img src="<?= htmlspecialchars($galleryPhoto) ?>"
-                                            alt="Gallery Photo"
-                                            style="width:120px; height:120px; object-fit:cover; display:block; margin-bottom:8px;">
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Profile Photo:</label>
+                                    <input type="file" name="profile_photo" accept="image/*" id="photoInput" class="form-control arcade-input">
+                                </div>
 
-                                        <button type="submit"
-                                            name="delete_gallery_photo"
-                                            value="<?= htmlspecialchars($galleryPhoto) ?>"
-                                            onclick="return confirm('Remove this photo from your gallery?');">
-                                            Delete Photo
-                                        </button>
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Photo Gallery:</label>
+                                    <input type="file" name="gallery_photos[]" accept="image/*" id="galleryInput" multiple class="form-control arcade-input">
+                                </div>
+
+                                <?php if (!empty($existingGalleryPhotos)): ?>
+                                    <div class="col-12">
+                                        <label class="text-glow mb-2" style="font-size: 10px;">Current Gallery Photos:</label>
+                                        <div class="d-flex flex-wrap gap-3">
+                                            <?php foreach ($existingGalleryPhotos as $galleryPhoto): ?>
+                                                <div class="text-center">
+                                                    <img src="<?= htmlspecialchars($galleryPhoto) ?>"
+                                                        alt="Gallery Photo"
+                                                        class="img-fluid rounded mb-2"
+                                                        style="width: 100px; height: 100px; object-fit: cover; border: 2px solid var(--cyan);">
+                                                    <div>
+                                                        <button type="submit"
+                                                            name="delete_gallery_photo"
+                                                            value="<?= htmlspecialchars($galleryPhoto) ?>"
+                                                            class="btn-arcade btn-arcade-danger"
+                                                            style="font-size: 8px; padding: 4px 8px;"
+                                                            onclick="return confirm('Remove this photo from your gallery?');">
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
                                     </div>
-                                <?php endforeach; ?>
+                                <?php endif; ?>
+
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Location:</label>
+                                    <input type="text" name="location" placeholder="Location" id="locationInput"
+                                        class="form-control arcade-input"
+                                        value="<?= htmlspecialchars($profile['location'] ?? '') ?>"
+                                        <?= $isNewProfile ? 'required' : '' ?>>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Date of Birth:</label>
+                                    <?php $maxDob = date('Y-m-d', strtotime('-18 years')); ?>
+                                    <input type="date" name="date_of_birth"
+                                        class="form-control arcade-input"
+                                        max="<?= $maxDob ?>"
+                                        value="<?= htmlspecialchars($profile['date_of_birth'] ?? '') ?>"
+                                        <?= $isNewProfile ? 'required' : '' ?>>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Gender:</label>
+                                    <select name="gender" id="genderInput" class="form-select arcade-input" <?= $isNewProfile ? 'required' : '' ?>>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male" <?= ($profile['gender'] ?? '') === 'Male' ? 'selected' : '' ?>>Male</option>
+                                        <option value="Female" <?= ($profile['gender'] ?? '') === 'Female' ? 'selected' : '' ?>>Female</option>
+                                        <option value="Other" <?= ($profile['gender'] ?? '') === 'Other' ? 'selected' : '' ?>>Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Seeking:</label>
+                                    <select name="seeking" id="seekingInput" class="form-select arcade-input" <?= $isNewProfile ? 'required' : '' ?>>
+                                        <option value="">Select</option>
+                                        <option value="Male" <?= ($profile['seeking'] ?? '') === 'Male' ? 'selected' : '' ?>>Male</option>
+                                        <option value="Female" <?= ($profile['seeking'] ?? '') === 'Female' ? 'selected' : '' ?>>Female</option>
+                                        <option value="Other" <?= ($profile['seeking'] ?? '') === 'Other' ? 'selected' : '' ?>>Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Favorite Games:</label>
+                                    <input type="text" id="gameSearch" placeholder="Search Games..." class="form-control arcade-input mb-2">
+                                    <div id="gamesList" class="neon-box p-2" style="max-height: 180px; overflow-y: auto; font-size: 10px;">
+                                        <?php foreach ($allGames as $game): ?>
+                                            <label class="game-option d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;">
+                                                <span><?= htmlspecialchars($game['game_name']) ?></span>
+                                                <input type="checkbox" name="games[]" value="<?= htmlspecialchars($game['game_id']) ?>"
+                                                    <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
+                                            </label>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">Platforms:</label>
+                                    <input type="text" id="platformSearch" placeholder="Search Platforms..." class="form-control arcade-input mb-2">
+                                    <div id="platformsList" class="neon-box p-2" style="max-height: 180px; overflow-y: auto; font-size: 10px;">
+                                        <?php foreach ($allPlatforms as $platform): ?>
+                                            <label class="platform-option d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;">
+                                                <span><?= htmlspecialchars($platform['platform_name']) ?></span>
+                                                <input type="checkbox" name="platforms[]" value="<?= htmlspecialchars($platform['platform_id']) ?>"
+                                                    <?= in_array($platform['platform_id'], $selectedPlatforms) ? 'checked' : '' ?>>
+                                            </label>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="text-glow mb-1" style="font-size: 10px;">About Me:</label>
+                                    <textarea name="about_me" placeholder="Write a short bio..." id="bioInput"
+                                        class="form-control arcade-input"
+                                        rows="4"
+                                        <?= $isNewProfile ? 'required' : '' ?>><?= htmlspecialchars($profile['about_me'] ?? '') ?></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="text-white" style="font-size: 10px; cursor: pointer;">
+                                        <input type="checkbox" name="smoker" <?= !empty($profile['smoker']) ? 'checked' : '' ?>> Smoker
+                                    </label>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="text-white" style="font-size: 10px; cursor: pointer;">
+                                        <input type="checkbox" name="drinker" <?= !empty($profile['drinker']) ? 'checked' : '' ?>> Drinker
+                                    </label>
+                                </div>
+
+                                <div class="col-12 mt-3">
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn-arcade">Save Profile</button>
+                                    </div>
+                                </div>
+
                             </div>
-                        </div>
-                    <?php endif; ?>
+                        </form>
 
-                    <div class="profile-form-group">
-                        <input type="text" name="location" placeholder="Location" id="locationInput"
-
-                            <div class="profile-form-group">
-                        <input type="text" name="location" placeholder="Location" id="locationInput"
-                            value="<?= htmlspecialchars($profile['location'] ?? '') ?>"
-                            <?= $isNewProfile ? 'required' : '' ?>>
                     </div>
-
-                    <div class="profile-form-group">
-                        <label>Date of Birth:</label>
-                        <?php $maxDob = date('Y-m-d', strtotime('-18 years')); ?>
-                        <input type="date" name="date_of_birth"
-                            max="<?= $maxDob ?>"
-                            value="<?= htmlspecialchars($profile['date_of_birth'] ?? '') ?>"
-                            <?= $isNewProfile ? 'required' : '' ?>>
-                    </div>
-
-                    <div class="profile-form-group">
-                        <label>Gender:</label>
-                        <select name="gender" id="genderInput" <?= $isNewProfile ? 'required' : '' ?>>
-                            <option value="">Select Gender</option>
-                            <option value="Male" <?= ($profile['gender'] ?? '') === 'Male'   ? 'selected' : '' ?>>Male</option>
-                            <option value="Female" <?= ($profile['gender'] ?? '') === 'Female' ? 'selected' : '' ?>>Female</option>
-                            <option value="Other" <?= ($profile['gender'] ?? '') === 'Other'  ? 'selected' : '' ?>>Other</option>
-                        </select>
-                    </div>
-
-                    <div class="profile-form-group">
-                        <label>Seeking:</label>
-                        <select name="seeking" id="seekingInput" <?= $isNewProfile ? 'required' : '' ?>>
-                            <option value="">Select</option>
-                            <option value="Male" <?= ($profile['seeking'] ?? '') === 'Male'   ? 'selected' : '' ?>>Male</option>
-                            <option value="Female" <?= ($profile['seeking'] ?? '') === 'Female' ? 'selected' : '' ?>>Female</option>
-                            <option value="Other" <?= ($profile['seeking'] ?? '') === 'Other'  ? 'selected' : '' ?>>Other</option>
-                        </select>
-                    </div>
-
-                    <div class="profile-form-group">
-                        <label>Favorite Games (Choose up to 5):</label>
-                        <input type="text" id="gameSearch" placeholder="Search Games..." style="margin-bottom:10px; width:100%">
-                        <div id="gamesList" style="max-height:220px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:6px;">
-                            <?php foreach ($allGames as $game): ?>
-                                <label class="game-option" style="display:grid; grid-template-columns: 1fr 24px; align-items:center; column-gap:12px; margin-bottom:8px;">
-                                    <span><?= htmlspecialchars($game['game_name']) ?></span>
-                                    <input type="checkbox" name="games[]" value="<?= htmlspecialchars($game['game_id']) ?>"
-                                        <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <div class="profile-form-group">
-                        <label>Platforms:</label>
-                        <input type="text" id="platformSearch" placeholder="Search Platforms..." style="margin-bottom:10px; width:100%">
-
-                        <div id="platformsList" style="max-height:220px; overflow-y:auto; border:1px solid #ccc; padding:10px; border-radius:6px;">
-                            <?php foreach ($allPlatforms as $platform): ?>
-                                <label class="platform-option" style="display:grid; grid-template-columns: 1fr 24px; align-items:center; column-gap:12px; margin-bottom:8px;">
-                                    <span><?= htmlspecialchars($platform['platform_name']) ?></span>
-                                    <input type="checkbox" name="platforms[]" value="<?= htmlspecialchars($platform['platform_id']) ?>"
-                                        <?= in_array($platform['platform_id'], $selectedPlatforms) ? 'checked' : '' ?>>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-
-                    <div class="profile-form-group">
-                        <textarea name="about_me" placeholder="Write a short bio..." id="bioInput"
-                            <?= $isNewProfile ? 'required' : '' ?>><?= htmlspecialchars($profile['about_me'] ?? '') ?></textarea>
-                    </div>
-
-                    <div class="profile-form-group">
-                        <label><input type="checkbox" name="smoker" <?= !empty($profile['smoker']) ? 'checked' : '' ?>> Smoker</label>
-                    </div>
-
-                    <div class="profile-form-group">
-                        <label><input type="checkbox" name="drinker" <?= !empty($profile['drinker']) ? 'checked' : '' ?>> Drinker</label>
-                    </div>
-
-                    <button type="submit">Save Profile</button>
-
-                </form>
+                </div>
             </div>
+
         </div>
     </div>
 
@@ -499,28 +534,24 @@ if (empty($error)) {
             const selected = Array.from(gameCheckboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.parentElement.querySelector("span").textContent);
-
             previewGames.textContent = "Favorite Games: " + (selected.length ? selected.join(", ") : "");
         }
 
         gameSearch.addEventListener("input", function() {
             const search = this.value.toLowerCase();
-
             gameOptions.forEach(option => {
                 const text = option.textContent.toLowerCase();
-                option.style.display = text.includes(search) ? "block" : "none";
+                option.style.display = text.includes(search) ? "flex" : "none";
             });
         });
 
         gameCheckboxes.forEach(checkbox => {
             checkbox.addEventListener("change", function() {
                 const checkedCount = Array.from(gameCheckboxes).filter(cb => cb.checked).length;
-
                 if (checkedCount > 5) {
                     this.checked = false;
                     alert("You can select up to 5 favourite games only.");
                 }
-
                 updatePreviewGames();
             });
         });
@@ -535,16 +566,14 @@ if (empty($error)) {
             const selected = Array.from(platformCheckboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.parentElement.querySelector("span").textContent);
-
             previewPlatforms.textContent = "Platforms: " + (selected.length ? selected.join(", ") : "");
         }
 
         platformSearch.addEventListener("input", function() {
             const search = this.value.toLowerCase();
-
             platformOptions.forEach(option => {
                 const text = option.textContent.toLowerCase();
-                option.style.display = text.includes(search) ? "block" : "none";
+                option.style.display = text.includes(search) ? "flex" : "none";
             });
         });
 
@@ -553,9 +582,8 @@ if (empty($error)) {
                 updatePreviewPlatforms();
             });
         });
-
         updatePreviewPlatforms();
     </script>
-</body>
 
+</body>
 </html>

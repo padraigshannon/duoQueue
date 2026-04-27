@@ -58,57 +58,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $date = date('Y-m-d');
 ?>
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>DuoQueue</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - Report User</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
 
 <body>
 
-    <div class="content">
-        <div class="report-page">
+    <div class="arcade-screen px-3 d-flex flex-column">
 
-            <div class="report-topbar">
-                <a href="matches.php" class="back-btn">&lt; Back</a>
-                <span class="report-date"><?= $date ?></span>
+        <!-- Top bar -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <a href="matches.php" class="btn-arcade btn-arcade-cyan" style="font-size: 9px; padding: 6px 12px; text-decoration: none;">&lt; Back</a>
+            <span class="report-date"><?= $date ?></span>
+        </div>
+
+        <!-- Report container -->
+        <div class="card arcade-card flex-grow-1 d-flex flex-column overflow-hidden">
+
+            <!-- Header -->
+            <div class="p-3" style="border-bottom: 3px solid var(--cyan);">
+                <h3 class="mb-0" style="font-size: clamp(10px, 1.2vw, 15px);">Report: <?= $reported_name ?></h3>
             </div>
 
-            <div class="report-container">
-
-                <div class="report-header">
-                    <h3 class="report-title">Report: <?= $reported_name ?></h3>
+            <?php if ($success): ?>
+                <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+                    <p class="arcade-success" style="font-size: clamp(9px, 1vw, 12px);">Report submitted. Thank you.</p>
                 </div>
+            <?php else: ?>
 
-                <?php if ($success): ?>
-                    <p class="success-msg">Report submitted. Thank you.</p>
-                <?php else: ?>
+                <form method="POST" action="reportForm.php?user_id=<?= $reported_user_id ?>" class="flex-grow-1 d-flex flex-column p-3">
+                    <input type="hidden" name="reported_user_id" value="<?= $reported_user_id ?>">
 
                     <?php if ($error): ?>
-                        <p class="error-msg"><?= htmlspecialchars($error) ?></p>
+                        <p class="arcade-error text-center mb-3"><?= htmlspecialchars($error) ?></p>
                     <?php endif; ?>
 
-                    <form method="POST" action="reportForm.php?user_id=<?= $reported_user_id ?>">
-                        <input type="hidden" name="reported_user_id" value="<?= $reported_user_id ?>">
+                    <label class="text-glow mb-2" style="font-size: clamp(8px, 0.9vw, 11px);">Reason for report:</label>
+                    <textarea name="reason" id="reason" required
+                        class="form-control arcade-input flex-grow-1 mb-3"
+                        placeholder="Describe the issue..."></textarea>
 
-                        <label for="reason">Reason for report:</label>
-                        <textarea name="reason" id="reason" required
-                            placeholder="Describe the issue..."></textarea>
+                    <div class="d-flex justify-content-center" style="border-top: 3px solid var(--cyan); padding-top: 12px;">
+                        <button type="submit" class="btn-arcade btn-arcade-cyan" style="font-size: 9px; padding: 10px 25px;">Submit Report</button>
+                    </div>
+                </form>
 
-                        <div class="report-actions">
-                            <button type="submit" class="btn-remove">Submit Report</button>
-                        </div>
-                    </form>
-
-                <?php endif; ?>
-
-            </div>
+            <?php endif; ?>
 
         </div>
-    </div>
 
+    </div>
 
 </body>
 </html>
