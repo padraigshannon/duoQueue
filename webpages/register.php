@@ -26,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $repeatPassword = $_POST["repeat_password"];
 
     $minPassLength = 8;
-    if ($password > 8) {
-        $error = "Password must be longer than $minPassLength characters!";
+    if (strlen($password) <= $minPassLength) {
+        $error = "Password must be at least $minPassLength characters or longer!";
     } elseif ($password !== $repeatPassword) {
         $error = "Passwords do not match!";
     } else {
