@@ -34,56 +34,57 @@ $pass = '';
     ?>
 
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>DuoQueue</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
-
 <body>
 
-    <nav>
-        <a href="home.php">Home</a>
-        <a href="profilepage.php">Profile</a>
-        <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duos</a>
-        <a href="search.php">Search</a>
-        <a href="aboutus.php">About Us</a>
-        <a href="logout.php">Logout</a>
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <a href="home.php" class="nav-link">Home</a>
+            <a href="profilepage.php" class="nav-link">Profile</a>
+            <a href="matchmake.php" class="nav-link">Matchmake</a>
+            <a href="matches.php" class="nav-link">My Duos</a>
+            <a href="search.php" class="nav-link">Search</a>
+            <a href="aboutus.php" class="nav-link">About Us</a>
+            <a href="logout.php" class="nav-link">Logout</a>
+        </div>
     </nav>
 
-    <div class="content">
-        <div class="home-container">
+    <div class="arcade-screen d-flex flex-column align-items-center justify-content-center p-3">
 
-            <h2 class="welcome-text">Welcome back, Player!</h2>
+        <h2 class="text-glow mb-4" style="font-size: clamp(10px, 1.3vw, 16px);">Welcome back, Player!</h2>
 
-            <?php if (!$profileComplete): ?>
-                <div class="home-alert">
-                    Complete your profile to get more matches!
-                    <a href="profile.php">Edit Profile</a>
-                </div>
-            <?php endif; ?>
-
-            <div class="home-stats">
-                <div class="stat-box">
-                    <span class="stat-number"><?= $matchCount ?></span>
-                    <span class="stat-label">Duo's</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-number"><?= $likesSent ?></span>
-                    <span class="stat-label">Likes Sent</span>
-                </div>
+        <?php if (!$profileComplete): ?>
+            <div class="arcade-alert text-center p-2 px-4 mb-4">
+                Complete your profile to get more matches!
+                <a href="profile.php" class="arcade-link ms-2">Edit Profile</a>
             </div>
+        <?php endif; ?>
 
-            <div class="home-actions">
-                <a href="matchmake.php" class="home-btn">Start Matchmaking</a>
-                <a href="matches.php" class="home-btn">My Duo's</a>
-                <a href="profilepage.php" class="home-btn">View Profile</a>
+        <div class="d-flex flex-wrap justify-content-center gap-4 mb-4">
+            <div class="stat-box d-flex flex-column align-items-center">
+                <span class="stat-number"><?= $matchCount ?></span>
+                <span class="stat-label">Duos</span>
             </div>
-
+            <div class="stat-box d-flex flex-column align-items-center">
+                <span class="stat-number"><?= $likesSent ?></span>
+                <span class="stat-label">Likes Sent</span>
+            </div>
         </div>
+
+        <div class="d-flex flex-column gap-3 w-100" style="max-width: 300px;">
+            <a href="matchmake.php" class="btn-arcade btn-arcade-cyan text-center text-decoration-none d-block p-3" style="font-size: clamp(8px, 0.9vw, 11px);">Start Matchmaking</a>
+            <a href="matches.php" class="btn-arcade btn-arcade-cyan text-center text-decoration-none d-block p-3" style="font-size: clamp(8px, 0.9vw, 11px);">My Duos</a>
+            <a href="profilepage.php" class="btn-arcade btn-arcade-cyan text-center text-decoration-none d-block p-3" style="font-size: clamp(8px, 0.9vw, 11px);">View Profile</a>
+        </div>
+
     </div>
 
 </body>

@@ -1,9 +1,9 @@
 <?php
 session_start();
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -56,122 +56,102 @@ if (!empty($query) || !empty($selectedGames)) {
 }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DuoQueue - User Search</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        .search-wrapper {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-            justify-content: center;
-            width: 90%;
-            max-width: 1100px;
-        }
-
-        .search-filter-panel {
-            width: 200px;
-            border: 3px solid #00ffff;
-            box-shadow: 0 0 8px #00ffff;
-            padding: 15px;
-            color: #ffffff;
-            font-size: 10px;
-            flex-shrink: 0;
-        }
-
-        .search-filter-panel h3 {
-            margin-bottom: 15px;
-            font-size: 10px;
-        }
-
-        .search-filter-panel label {
-            display: block;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        .search-filter-panel input[type="checkbox"] {
-            margin-right: 8px;
-        }
-
-        .search-results {
-            flex: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
-<body>
-    <nav>
-    <?php if (!empty($_SESSION['is_admin'])): ?>
-        <a href="adminHome.php">Home</a>
-        <a href="moderation.php">Moderation</a>
-        <a href="search.php">Search</a>
-        <a href="logout.php">Logout</a>
-    <?php else: ?>
-        <a href="home.php">Home</a>
-        <a href="profilepage.php">Profile</a>
-        <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duos</a>
-        <a href="search.php">Search</a>
-        <a href="aboutus.php">About Us</a>
-        <a href="logout.php">Logout</a>
-    <?php endif; ?>
-</nav>
 
-    <div class="content">
-        <div class="search-wrapper">
+<body>
+
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <?php if (!empty($_SESSION['is_admin'])): ?>
+                <a href="adminHome.php" class="nav-link">Home</a>
+                <a href="manageGames.php" class="nav-link">Games</a>
+                <a href="managePlatforms.php" class="nav-link">Platforms</a>
+                <a href="moderation.php" class="nav-link">Moderation</a>
+                <a href="search.php" class="nav-link">Search</a>
+                <a href="logout.php" class="nav-link">Logout</a>
+            <?php else: ?>
+                <a href="home.php" class="nav-link">Home</a>
+                <a href="profilepage.php" class="nav-link">Profile</a>
+                <a href="matchmake.php" class="nav-link">Matchmake</a>
+                <a href="matches.php" class="nav-link">My Duos</a>
+                <a href="search.php" class="nav-link">Search</a>
+                <a href="aboutus.php" class="nav-link">About Us</a>
+                <a href="logout.php" class="nav-link">Logout</a>
+            <?php endif; ?>
+        </div>
+    </nav>
+
+    <div class="arcade-screen px-3">
+        <div class="row g-3">
 
             <!-- Game Filter Panel -->
-            <div class="search-filter-panel">
-                <h3>Filter by Game</h3>
-                <?php if (empty($allGames)): ?>
-                    <p>No games found.</p>
-                <?php else: ?>
-                    <input type="text" id="gameSearch" placeholder="Search Games..."
-                           style="margin-bottom:10px; width:100%;" form="searchForm">
+            <div class="col-4 col-md-3">
+                <div class="card arcade-card">
+                    <div class="card-body p-3">
+                        <h4 class="mb-3" style="font-size: clamp(8px, 0.9vw, 11px);">Filter by Game</h4>
 
-                    <div id="gamesList" style="max-height:220px; overflow-y:auto; border:1px solid #00ccff; padding:10px;">
-                        <?php foreach ($allGames as $game): ?>
-                            <label class="game-option" style="display:grid; grid-template-columns: 1fr 24px; align-items:center; column-gap:12px; margin-bottom:8px;">
-                                <span><?= htmlspecialchars($game['game_name']) ?></span>
-                                <input type="checkbox"
-                                    name="filter_games[]"
-                                    value="<?= $game['game_id'] ?>"
-                                    form="searchForm"
-                                    <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
-                            </label>
-                        <?php endforeach; ?>
+                        <?php if (empty($allGames)): ?>
+                            <p style="font-size: 9px;">No games found.</p>
+                        <?php else: ?>
+                            <input type="text" id="gameSearch" placeholder="Search Games..."
+                                class="form-control arcade-input mb-2" style="font-size: 9px;">
+
+                            <div id="gamesList" class="neon-box p-2" style="max-height: 45vh; overflow-y: auto; font-size: 9px;">
+                                <?php foreach ($allGames as $game): ?>
+                                    <label class="game-option d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;">
+                                        <span><?= htmlspecialchars($game['game_name']) ?></span>
+                                        <input type="checkbox"
+                                            name="filter_games[]"
+                                            value="<?= $game['game_id'] ?>"
+                                            form="searchForm"
+                                            <?= in_array($game['game_id'], $selectedGames) ? 'checked' : '' ?>>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                <?php endif; ?>
+                </div>
             </div>
 
             <!-- Search Box and Results -->
-            <div class="search-results">
-                <div class="login-box">
-                    <h2>User Search</h2>
+            <div class="col-8 col-md-9">
+                <div class="card arcade-card">
+                    <div class="card-body p-3">
+                        <h2 class="card-title text-center mb-3" style="font-size: clamp(12px, 1.3vw, 16px);">User Search</h2>
 
-                    <form id="searchForm" method="GET" action="search.php">
-                        <input type="text" name="query" placeholder="Search by name..."
-                            value="<?= htmlspecialchars($query) ?>">
-                        <button type="submit">Search</button>
-                    </form>
+                        <form id="searchForm" method="GET" action="search.php">
+                            <div class="d-flex gap-2">
+                                <input type="text" name="query" placeholder="Search by name..."
+                                    class="form-control arcade-input flex-fill"
+                                    value="<?= htmlspecialchars($query) ?>">
+                                <button type="submit" class="btn-arcade btn-arcade-cyan" style="font-size: 10px; white-space: nowrap; padding: 10px 16px;">Search</button>
+                            </div>
+                        </form>
 
-                    <?php if (!empty($query) || !empty($selectedGames)): ?>
-                        <?php if (empty($results)): ?>
-                            <p style="color: #00ffff; margin-top: 20px;">No users found.</p>
-                        <?php else: ?>
-                            <ul style="list-style: none; padding: 0; margin-top: 20px;">
-                                <?php foreach ($results as $result): ?>
-                                    <li style="margin: 10px 0;">
-                                        <a href="profilepage.php?user_id=<?= $result['user_id'] ?>" class="link">
+                        <?php if (!empty($query) || !empty($selectedGames)): ?>
+                            <?php if (empty($results)): ?>
+                                <p class="text-glow text-center mt-4" style="font-size: 10px;">No users found.</p>
+                            <?php else: ?>
+                                <div class="mt-3">
+                                    <?php foreach ($results as $result): ?>
+                                        <a href="profilepage.php?user_id=<?= $result['user_id'] ?>"
+                                            class="d-block arcade-link py-2 px-3 mb-2"
+                                            style="border-bottom: 1px solid rgba(0, 255, 255, 0.2);">
                                             <?= htmlspecialchars($result['first_name'] . ' ' . $result['last_name']) ?>
                                         </a>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
@@ -186,7 +166,7 @@ if (!empty($query) || !empty($selectedGames)) {
             const search = this.value.toLowerCase();
             gameOptions.forEach(option => {
                 const text = option.textContent.toLowerCase();
-                option.style.display = text.includes(search) ? "grid" : "none";
+                option.style.display = text.includes(search) ? "flex" : "none";
             });
         });
     </script>
