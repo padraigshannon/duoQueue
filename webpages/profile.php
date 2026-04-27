@@ -309,7 +309,8 @@ if (empty($error)) {
         <a href="home.php">Home</a>
         <a href="profilepage.php">Profile</a>
         <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duo's</a>
+        <a href="matches.php">My Duos</a>
+        <a href="search.php">Search</a>
         <a href="aboutus.php">About Us</a>
     </nav>
 
@@ -378,6 +379,8 @@ if (empty($error)) {
                     <?php endif; ?>
 
                     <div class="profile-form-group">
+                        <input type="text" name="location" placeholder="Location" id="locationInput"
+
                             <div class="profile-form-group">
                         <input type="text" name="location" placeholder="Location" id="locationInput"
                             value="<?= htmlspecialchars($profile['location'] ?? '') ?>"

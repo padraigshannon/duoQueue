@@ -4,10 +4,11 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$host = 'localhost';
-$db   = 'duoqueue_db';
-$user = 'root';
-$pass = '';
+$host = 'sql113.infinityfree.com';
+$db   = 'if0_41396749_duoqueue_db';
+$user = 'if0_41396749';
+$pass = 'VQtMPg6j4SF2';
+
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8", $user, $pass);
@@ -22,13 +23,46 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = $_SESSION['user_id'];
-$limit = 1; 
+$limit  = 1;
 
-$sql = '
- SELECT
+// Fetch the logged in user's games for the filter panel
+$gamesStmt = $pdo->prepare("
+    SELECT ag.game_id, ag.game_name 
+    FROM users_games ug
+    JOIN available_games ag ON ug.game_id = ag.game_id
+    WHERE ug.user_id = ?
+");
+$gamesStmt->execute([$userId]);
+$userGames = $gamesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Read excluded game IDs from the form submission — default to empty array
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['exclude_games'])) {
+    $_SESSION['exclude_games'] = array_map('intval', $_POST['exclude_games']);
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['liked_user_id'], $_POST['disliked_user_id'])) {
+    // like/dislike submitted — keep existing session value, don't clear it
+}
+
+$excludedGameIds = $_SESSION['exclude_games'] ?? [];
+
+// Build the games score subquery — if games are excluded, add a WHERE clause to filter them out
+$excludeParams = [];
+if (!empty($excludedGameIds)) {
+    $paramNames = [];
+    foreach ($excludedGameIds as $i => $gameId) {
+        $paramNames[]           = ':excl_' . $i;
+        $excludeParams[':excl_' . $i] = $gameId;
+    }
+    $gamesExclusion = "AND ug1.game_id NOT IN (" . implode(',', $paramNames) . ")";
+} else {
+    $gamesExclusion = "";
+}
+
+$sql = "
+    SELECT
         u.user_id,
         u.first_name,
         u.last_name,
+        up.profile_photo,
         up.about_me,
         up.location,
         up.gender,
@@ -38,7 +72,7 @@ $sql = '
         (
             COALESCE(games_score.pts, 0)
             + COALESCE(plat_score.pts, 0)
-            + IF(up.gender = seeker.seeking AND seeker.gender = up.seeking, 20, 0)
+            + IF(up.gender = seeker.seeking, 20, 0)
             + CASE
                 WHEN ABS(YEAR(NOW()) - YEAR(up.date_of_birth)) <= 5 THEN 15
                 WHEN ABS(YEAR(NOW()) - YEAR(up.date_of_birth)) <= 10 THEN 5
@@ -61,6 +95,7 @@ $sql = '
         FROM users_games ug1
         JOIN users_games ug2 ON ug1.game_id = ug2.game_id
         WHERE ug1.user_id = :uid_games
+        $gamesExclusion
         GROUP BY ug2.user_id
     ) AS games_score ON games_score.user_id = u.user_id
 
@@ -74,8 +109,6 @@ $sql = '
 
     WHERE u.user_id <> :uid_exclude
         AND u.is_banned = 0
-        AND (up.gender = seeker.seeking OR seeker.seeking = \'any\')
-        AND (seeker.gender = up.seeking OR up.seeking = \'any\')
         AND u.user_id NOT IN (
             SELECT liked_user_id FROM likes WHERE user_id = :uid_likes
         )
@@ -89,149 +122,159 @@ $sql = '
         )
 
     ORDER BY match_score DESC
-    LIMIT :limit';
+    LIMIT :limit";
 
-$stmt = $pdo->prepare("$sql");
-$stmt->bindValue(':uid_seeker', $userId, PDO::PARAM_INT);
-$stmt->bindValue(':uid_games', $userId, PDO::PARAM_INT);
+$stmt = $pdo->prepare($sql);
+$stmt->bindValue(':uid_seeker',    $userId, PDO::PARAM_INT);
+$stmt->bindValue(':uid_games',     $userId, PDO::PARAM_INT);
 $stmt->bindValue(':uid_platforms', $userId, PDO::PARAM_INT);
-$stmt->bindValue(':uid_exclude', $userId, PDO::PARAM_INT);
-$stmt->bindValue(':uid_likes', $userId, PDO::PARAM_INT);
-$stmt->bindValue(':uid_dislikes', $userId, PDO::PARAM_INT);
-$stmt->bindValue(':uid_matches1', $userId, PDO::PARAM_INT);
-$stmt->bindValue(':uid_matches2', $userId, PDO::PARAM_INT);
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->execute();
+$stmt->bindValue(':uid_exclude',   $userId, PDO::PARAM_INT);
+$stmt->bindValue(':uid_likes',     $userId, PDO::PARAM_INT);
+$stmt->bindValue(':uid_dislikes',  $userId, PDO::PARAM_INT);
+$stmt->bindValue(':uid_matches1',  $userId, PDO::PARAM_INT);
+$stmt->bindValue(':uid_matches2',  $userId, PDO::PARAM_INT);
+$stmt->bindValue(':limit',         $limit,  PDO::PARAM_INT);
 
-$potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
-
-$stmt->closeCursor();
-
-if ($potentialMatch) {
-    // Fetch profile photo for the potential match
-    $stmt_profile = $pdo->prepare("SELECT profile_photo FROM user_profiles WHERE user_id = :user_id");
-    $stmt_profile->execute(['user_id' => $potentialMatch['user_id']]);
-    $profile_photo = $stmt_profile->fetchColumn();
-
-    // Fetch games for the potential match
-    $stmt_games = $pdo->prepare("SELECT ag.game_name FROM available_games ag JOIN users_games ug ON ag.game_id = ug.game_id WHERE ug.user_id = :user_id ORDER BY ag.game_name");
-    $stmt_games->execute(['user_id' => $potentialMatch['user_id']]);
-    $games = $stmt_games->fetchAll(PDO::FETCH_COLUMN);
-
-    // Fetch platforms for the potential match
-    $stmt_platforms = $pdo->prepare("SELECT ap.platform_name FROM available_platforms ap JOIN user_platforms up ON ap.platform_id = up.platform_id WHERE up.user_id = :user_id ORDER BY ap.platform_name");
-    $stmt_platforms->execute(['user_id' => $potentialMatch['user_id']]);
-    $platforms = $stmt_platforms->fetchAll(PDO::FETCH_COLUMN);
-
-    // Fetch gallery photos
-    $stmt_photos = $pdo->prepare("SELECT photo FROM user_photos WHERE user_id = :user_id LIMIT 5");
-    $stmt_photos->execute(['user_id' => $potentialMatch['user_id']]);
-    $photos = $stmt_photos->fetchAll(PDO::FETCH_COLUMN);
+// Bind each excluded game ID individually
+foreach ($excludeParams as $param => $value) {
+    $stmt->bindValue($param, $value, PDO::PARAM_INT);
 }
+
+$stmt->execute();
+$potentialMatch = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt->closeCursor();
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Matchmake</title>
-
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        .matchmake-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            justify-content: center;
+            width: 90%;
+            max-width: 1100px;
+        }
+
+        .filter-panel {
+            width: 200px;
+            border: 3px solid #00ffff;
+            box-shadow: 0 0 8px #00ffff;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        .filter-panel h3 {
+            margin-bottom: 15px;
+            font-size: 10px;
+        }
+
+        .filter-panel label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .filter-panel input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .filter-panel button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .filter-panel button:hover {
+            background: #00ccff;
+            color: black;
+        }
+    </style>
 </head>
 
 <body>
-
     <nav>
         <a href="home.php">Home</a>
         <a href="profilepage.php">Profile</a>
         <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duo's</a>
+        <a href="matches.php">My Duos</a>
+        <a href="search.php">Search</a>
         <a href="aboutus.php">About Us</a>
         <a href="logout.php">Logout</a>
     </nav>
 
-<div class="content">
+    <div class="content">
 
-<?php if(isset($_GET['matched'])): ?>
-    <div class="match-notification">
-        <h3>It's a Match with <?php echo htmlspecialchars($_GET['name']); ?>!</h3>
+        <?php if (isset($_GET['matched'])): ?>
+            <div class="match-notification">
+                <h3>It's a Match with <?= htmlspecialchars($_GET['name']) ?>!</h3>
+            </div>
+        <?php endif; ?>
+
+        <div class="matchmake-wrapper">
+
+            <!-- Game Filter Panel -->
+            <form method="POST" action="matchmake.php">
+                <div class="filter-panel">
+                    <h3>Exclude Games</h3>
+                    <?php if (empty($userGames)): ?>
+                        <p>No games on your profile yet.</p>
+                    <?php else: ?>
+                        <?php foreach ($userGames as $game): ?>
+                            <label>
+                                <input type="checkbox" name="exclude_games[]"
+                                    value="<?= $game['game_id'] ?>"
+                                    <?= in_array($game['game_id'], $excludedGameIds) ? 'checked' : '' ?>>
+                                <?= htmlspecialchars($game['game_name']) ?>
+                            </label>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    <button type="submit">Apply</button>
+                </div>
+
+                <!-- Pass like/dislike actions through the same form -->
+                <?php if ($potentialMatch): ?>
+                    <div class="match-card">
+                        <h2>Match Found</h2>
+                        <p>Score: <?= $potentialMatch['match_score'] ?></p>
+
+                        <input type="text" value="<?= htmlspecialchars($potentialMatch['first_name']) ?>" readonly>
+                        <input type="text" value="<?= htmlspecialchars($potentialMatch['location']) ?>" readonly>
+                        <textarea readonly><?= htmlspecialchars($potentialMatch['about_me']) ?></textarea>
+
+                        <div class="match-actions">
+                            <form action="like.php" method="POST">
+                                <input type="hidden" name="liked_user_id" value="<?= $potentialMatch['user_id'] ?>">
+                                <button class="like-button">👍 Like</button>
+                            </form>
+                            <form action="dislike.php" method="POST">
+                                <input type="hidden" name="disliked_user_id" value="<?= $potentialMatch['user_id'] ?>">
+                                <button class="dislike-button">👎 Dislike</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="match-card">
+                        <h2>No Matches Available</h2>
+                    </div>
+                <?php endif; ?>
+
+            </form>
+
+        </div>
     </div>
-<?php endif; ?>
-
-<?php if ($potentialMatch): ?>
-
-<div class="match-card">
-
-    <h2>Player Found</h2>
-
-    <p>Score: <?php echo $potentialMatch['match_score']; ?></p>
-
-    <input type="text" value="<?php echo htmlspecialchars($potentialMatch['first_name']); ?>" readonly>
-    <input type="text" value="<?php echo htmlspecialchars($potentialMatch['location']); ?>" readonly>
-
-    <?php if (!empty($profile_photo)): ?>
-    <div class="profile-picture">
-        <h3>Profile Picture:</h3>
-        <img src="../uploads/profile_photos/<?php echo htmlspecialchars($profile_photo); ?>" alt="Profile Picture" style="max-width: 200px; max-height: 200px;">
-    </div>
-    <?php endif; ?>
-
-    <?php if (!empty($photos)): ?>
-    <div class="gallery">
-        <h3>Gallery Photos:</h3>
-        <?php foreach ($photos as $photo): ?>
-        <img src="../uploads/gallery_photos/<?php echo htmlspecialchars($photo); ?>" alt="Gallery Photo" style="max-width: 100px; max-height: 100px; margin: 5px;">
-        <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
-
-    <textarea readonly><?php echo htmlspecialchars($potentialMatch['about_me']); ?></textarea>
-
-    <?php if (!empty($games)): ?>
-    <h3>Games:</h3>
-    <ul>
-        <?php foreach ($games as $game): ?>
-        <li><?php echo htmlspecialchars($game); ?></li>
-        <?php endforeach; ?>
-    </ul>
-    <?php endif; ?>
-
-    <?php if (!empty($platforms)): ?>
-    <h3>Platforms:</h3>
-    <ul>
-        <?php foreach ($platforms as $platform): ?>
-        <li><?php echo htmlspecialchars($platform); ?></li>
-        <?php endforeach; ?>
-    </ul>
-    <?php endif; ?>
-
-    <div class="match-actions">
-
-        <!-- LIKE -->
-        <form action="like.php" method="POST">
-            <input type="hidden" name="liked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-            <button class="like-button">👍 Like</button>
-        </form>
-
-        <!-- DISLIKE -->
-        <form action="dislike.php" method="POST">
-            <input type="hidden" name="disliked_user_id" value="<?php echo $potentialMatch['user_id']; ?>">
-            <button class="dislike-button">👎 Dislike</button>
-        </form>
-
-    </div>
-
-</div>
-
-<?php else: ?>
-
-<div class="match-card">
-    <h2>No Matches Available</h2>
-</div>
-
-<?php endif; ?>
-
-</div>
-
 </body>
 </html>

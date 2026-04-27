@@ -12,7 +12,8 @@
         <a href="home.php">Home</a>
         <a href="profilepage.php">Profile</a>
         <a href="matchmake.php">Matchmake</a>
-        <a href="matches.php">My Duo's</a>
+        <a href="matches.php">My Duos</a>
+        <a href="search.php">Search</a>
         <a href="aboutus.php">About Us</a>
         <a href="logout.php">Logout</a>
     </nav>
