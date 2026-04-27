@@ -25,7 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password       = $_POST["password"];
     $repeatPassword = $_POST["repeat_password"];
 
-    if ($password !== $repeatPassword) {
+    $minPassLength = 8;
+    if (strlen($password) <= $minPassLength) {
+        $error = "Password must be at least $minPassLength characters or longer!";
+    } elseif ($password !== $repeatPassword) {
         $error = "Passwords do not match!";
     } else {
         // Check if email is already registered
@@ -57,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,6 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/arcade.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="login-box">
         <h2>Register</h2>
@@ -86,4 +91,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
 </body>
+
 </html>
