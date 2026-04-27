@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 }
 
 $user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $_SESSION['user_id'];
-$is_own_profile = ($user_id === $_SESSION['user_id']);
+$is_own_profile = ($user_id == $_SESSION['user_id']);
 
 $sql = "SELECT 
             u.first_name,

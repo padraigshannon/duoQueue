@@ -284,6 +284,8 @@ if (empty($error)) {
         if (!empty($profilePhoto)) {
             $currentPhoto = '/' . $profilePhoto;
         }
+
+        header("Location: profilepage.php?user_id=" . $userId);
     } catch (PDOException $e) {
         $error = "Profile update failed: " . $e->getMessage();
     }
