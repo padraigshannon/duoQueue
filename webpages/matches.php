@@ -172,12 +172,10 @@ unset($_SESSION['error']);
 
             </div>
 
-            <!-- Chat area -->
             <div class="flex-grow-1 d-flex flex-column overflow-hidden">
 
-                <!-- Chat header -->
                 <div class="d-flex align-items-center flex-wrap gap-2 p-2 flex-shrink-0" style="border-bottom: 3px solid var(--cyan); min-height: 60px;">
-                    <img src="<?= $other_user_photo ? htmlspecialchars($other_user_photo) : '../assets/profile.png' ?>" class="profile-pic">
+                    <img src="<?= $other_user_photo ? htmlspecialchars($other_user_photo) : '../assets/profile.jpg' ?>" class="profile-pic">
                     <span class="flex-grow-1" style="font-size: 10px; margin-left: 10px;">
                         <?= htmlspecialchars($other_user_name) ?>
                     </span>
@@ -202,7 +200,6 @@ unset($_SESSION['error']);
                     <?php endif; ?>
                 </div>
 
-                <!-- Messages -->
                 <div class="chat-messages flex-grow-1 p-3" style="overflow-y: auto;">
                     <?php if (empty($messages) && $selected_match_id): ?>
                         <p class="text-center" style="font-size: 9px; color: rgba(255,255,255,0.5);">No messages yet. Say hello!</p>
@@ -217,7 +214,6 @@ unset($_SESSION['error']);
                     <?php endif; ?>
                 </div>
 
-                <!-- Chat input -->
                 <div class="flex-shrink-0 chat-input" style="border-top: 3px solid var(--cyan);">
                     <?php if ($selected_match_id): ?>
                         <form method="POST" class="d-flex w-100">
