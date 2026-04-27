@@ -593,3 +593,8 @@ textarea.arcade-input {
     font-family: 'Press Start 2P', cursive;
     font-size: clamp(9px, 1vw, 12px);
 }
+
+.match-user.active {
+    background: rgba(0, 255, 255, 0.15);
+    border-left: 3px solid var(--cyan);
+}
