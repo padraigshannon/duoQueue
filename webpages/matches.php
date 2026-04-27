@@ -115,133 +115,141 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>DuoQueue</title>
-    <link rel="stylesheet" href="../assets/arcade.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoQueue - My Duos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/arcade-theme.css">
 </head>
 
 <body>
 
-        <nav>
-            <a href="home.php">Home</a>
-            <a href="profilepage.php">Profile</a>
-            <a href="matchmake.php">Matchmake</a>
-            <a href="matches.php">My Duos</a>
-            <a href="search.php">Search</a>
-            <a href="aboutus.php">About Us</a>
-            <a href="logout.php">Logout</a>
-        </nav>
+    <nav class="arcade-nav">
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <a href="home.php" class="nav-link">Home</a>
+            <a href="profilepage.php" class="nav-link">Profile</a>
+            <a href="matchmake.php" class="nav-link">Matchmake</a>
+            <a href="matches.php" class="nav-link">My Duos</a>
+            <a href="search.php" class="nav-link">Search</a>
+            <a href="aboutus.php" class="nav-link">About Us</a>
+            <a href="logout.php" class="nav-link">Logout</a>
+        </div>
+    </nav>
 
-    <div class="content">
-        <div class="matches-container">
+    <div class="arcade-screen px-3">
+        <div class="card arcade-card d-flex flex-row overflow-hidden" style="height: 70vh;">
 
-        <!-- Messaging Sidebar (Matched User Display) -->
-                <div class="matches-sidebar">
+            <!-- Sidebar -->
+            <div class="d-flex flex-column flex-shrink-1" style="width: 180px; min-width: 100px; border-right: 3px solid var(--cyan); overflow-y: auto;">
+
+                <?php if (empty($matches)): ?>
+                    <p class="text-center p-3" style="font-size: 9px; color: rgba(255,255,255,0.5);">No matches yet.</p>
+                <?php else: ?>
                     <?php foreach ($matches as $match):
-                        $sidebar_name = ($match['user1_id'] == $user_id) 
+                        $sidebar_name = ($match['user1_id'] == $user_id)
                             ? $match['user2_first'] . ' ' . $match['user2_last']
                             : $match['user1_first'] . ' ' . $match['user1_last'];
+                        $is_active = ($match['match_id'] == $selected_match_id);
                     ?>
-                        <a href="matches.php?match_id=<?= $match['match_id'] ?>" class="match-user">
-                            <?= $sidebar_name ?>
+                        <a href="matches.php?match_id=<?= $match['match_id'] ?>"
+                            class="match-user <?= $is_active ? 'active' : '' ?>">
+                            <?= htmlspecialchars($sidebar_name) ?>
                         </a>
                     <?php endforeach; ?>
-                </div>
-        <!-- Messaging Screen -->
-                <div class="chat-area">
-                    <div class="chat-header">
-                        <img src="<?= $other_user_photo ? htmlspecialchars($other_user_photo) : '../assets/profile.png' ?>" class="profile-pic">
-                        <span class="username"><?= htmlspecialchars($other_user_name) ?></span>
+                <?php endif; ?>
+            </div>
 
-                        <div class="header-buttons">
-                            <?php if ($selected_match_id && $other_user_id): ?>
-                                <a href="profilepage.php?user_id=<?= $other_user_id ?>">
-                                    <button>View Profile</button>
-                                </a>
-                                <form action="unmatch.php" method="POST" 
-                                    onsubmit="return confirm('Are you sure you want to unmatch?');" 
-                                    style="display:inline;">
-                                    <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
-                                    <button type="submit" class="danger">Unmatch</button>
-                                </form>
-                                <a href="reportForm.php?user_id=<?= $other_user_id ?>">
-                                    <button class="danger">Report</button>
-                                </a>
-                            <?php endif; ?>
+            <!-- Chat area -->
+            <div class="flex-grow-1 d-flex flex-column overflow-hidden">
+
+                <!-- Chat header -->
+                <div class="d-flex align-items-center flex-wrap gap-2 p-2 flex-shrink-0" style="border-bottom: 3px solid var(--cyan); min-height: 60px;">
+                    <img src="<?= $other_user_photo ? htmlspecialchars($other_user_photo) : '../assets/profile.png' ?>" class="profile-pic">
+                    <span class="flex-grow-1" style="font-size: 10px; margin-left: 10px;"><?= htmlspecialchars($other_user_name) ?></span>
+
+                    <?php if ($selected_match_id && $other_user_id): ?>
+                        <div class="d-flex gap-1 flex-wrap">
+                            <a href="profilepage.php?user_id=<?= $other_user_id ?>" class="text-decoration-none">
+                                <button class="btn-arcade btn-arcade-cyan" style="font-size: 7px; padding: 6px 8px;">View Profile</button>
+                            </a>
+                            <form action="unmatch.php" method="POST"
+                                onsubmit="return confirm('Are you sure you want to unmatch?');"
+                                class="d-inline">
+                                <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
+                                <button type="submit" class="btn-arcade btn-arcade-danger" style="font-size: 7px; padding: 6px 8px;">Unmatch</button>
+                            </form>
+                            <a href="reportForm.php?user_id=<?= $other_user_id ?>" class="text-decoration-none">
+                                <button class="btn-arcade btn-arcade-danger" style="font-size: 7px; padding: 6px 8px;">Report</button>
+                            </a>
                         </div>
-                    </div>
+                    <?php endif; ?>
+                </div>
 
-                    <?php if (isset($_SESSION['error'])): ?>
-        <p style="color:red; text-align:center; margin:10px;">
-            <?php 
-            echo $_SESSION['error']; 
-            unset($_SESSION['error']);
-            ?>
-        </p>
-    <?php endif; ?>
+                <!-- Error message -->
+                <?php if (isset($_SESSION['error'])): ?>
+                    <p class="arcade-error text-center m-2"><?= $_SESSION['error'] ?></p>
+                    <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
 
-                    <div class="chat-messages">
+                <!-- Messages -->
+                <div class="chat-messages flex-grow-1 p-3" style="overflow-y: auto;">
+                    <?php if (empty($messages) && $selected_match_id): ?>
+                        <p class="text-center" style="font-size: 9px; color: rgba(255,255,255,0.5);">No messages yet. Say hello!</p>
+                    <?php else: ?>
                         <?php foreach ($messages as $message):
-                            $class = ($message['sender_id'] == $user_id) ? "sent" : "reaceived";
+                            $class = ($message['sender_id'] == $user_id) ? "sent" : "received";
                         ?>
-                            <div class = "message <?= $class ?>">
+                            <div class="message <?= $class ?>">
                                 <?= htmlspecialchars($message['message']) ?>
                             </div>
                         <?php endforeach; ?>
-                    </div>
-
-                    <div class="chat-input">
-                        <?php if ($selected_match_id): ?>
-                            <form method="POST" style="display:flex; width:100%;">
-                                <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
-                                <input type="text" name="message" placeholder="Type message..." required>
-                                <button type="submit">Send</button>
-                        </form>
-                        <?php endif; ?>
-                    </div>
-
-  <script>
-function loadMessages() {
-    // 1. Get match_id from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const matchId = urlParams.get('match_id');
-
-    if (!matchId) {
-        console.log("No match_id found in URL");
-        return;
-    }
-
-    // 2. Fetch from PHP
-    fetch(`fetch_messages.php?match_id=${matchId}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.text();
-        })
-        .then(data => {
-            const chatBox = document.querySelector('.chat-messages');
-            if (chatBox) {
-                chatBox.innerHTML = data;
-                // Scroll to bottom
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        })
-        .catch(error => console.error('Error loading messages:', error));
-}
-
-// Run every 3 seconds
-setInterval(loadMessages, 3000);
-// Run once immediately on page load
-loadMessages();
-</script>
-
+                    <?php endif; ?>
                 </div>
+
+                <!-- Chat input -->
+                <div class="flex-shrink-0" style="border-top: 3px solid var(--cyan);">
+                    <?php if ($selected_match_id): ?>
+                        <form method="POST" class="d-flex">
+                            <input type="hidden" name="match_id" value="<?= $selected_match_id ?>">
+                            <input type="text" name="message" placeholder="Type message..." required
+                                class="form-control arcade-input flex-grow-1 border-0" style="border-radius: 0;">
+                            <button type="submit" class="btn-arcade btn-arcade-cyan" style="font-size: 10px; padding: 10px 20px; border-radius: 0;">Send</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+
+            </div>
+
         </div>
     </div>
 
-    
+    <script>
+    function loadMessages() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchId = urlParams.get('match_id');
+        if (!matchId) return;
+
+        fetch(`fetch_messages.php?match_id=${matchId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
+            .then(data => {
+                const chatBox = document.querySelector('.chat-messages');
+                if (chatBox) {
+                    chatBox.innerHTML = data;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            })
+            .catch(error => console.error('Error loading messages:', error));
+    }
+
+    setInterval(loadMessages, 3000);
+    loadMessages();
+    </script>
 
 </body>
 </html>
