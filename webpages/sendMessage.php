@@ -29,14 +29,12 @@ if (!$match_id || $message === '') {
     exit;
 }
 
-// Phone number check
 $normalized = preg_replace('/[\s\-().]/', '', $message);
 if (preg_match('/(\+?\d{1,3})?\d{9,}/', $normalized)) {
     echo json_encode(['success' => false, 'error' => 'Sharing phone numbers is not allowed.']);
     exit;
 }
 
-// Verify this user belongs to the match
 $stmt = $pdo->prepare("
     SELECT user1_id, user2_id 
     FROM matches 
