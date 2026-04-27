@@ -4,10 +4,10 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$host = 'sql113.infinityfree.com';
-$db   = 'if0_41396749_duoqueue_db';
-$user = 'if0_41396749';
-$pass = 'VQtMPg6j4SF2';
+$host = 'localhost';
+$db   = 'duoqueue_db';
+$user = 'root';
+$pass = '';
 
 
 try {
@@ -74,8 +74,8 @@ $sql = "
             + COALESCE(plat_score.pts, 0)
             + IF(up.gender = seeker.seeking, 20, 0)
             + CASE
-                WHEN ABS(YEAR(NOW()) - YEAR(up.date_of_birth)) <= 5 THEN 15
-                WHEN ABS(YEAR(NOW()) - YEAR(up.date_of_birth)) <= 10 THEN 5
+                WHEN ABS(YEAR(seeker.date_of_birth) - YEAR(up.date_of_birth)) <= 5 THEN 15
+                WHEN ABS(YEAR(seeker.date_of_birth) - YEAR(up.date_of_birth)) <= 10 THEN 5
                 ELSE 0
               END
             + IF(up.location = seeker.location, 5, 0)
@@ -109,6 +109,8 @@ $sql = "
 
     WHERE u.user_id <> :uid_exclude
         AND u.is_banned = 0
+        AND (up.gender = seeker.seeking OR seeker.seeking = 'any')
+        AND (seeker.gender = up.seeking OR up.seeking = 'any')
         AND u.user_id NOT IN (
             SELECT liked_user_id FROM likes WHERE user_id = :uid_likes
         )
@@ -244,7 +246,7 @@ $stmt->closeCursor();
                     <?php endif; ?>
                     <button type="submit">Apply</button>
                 </div>
-
+            </form>
                 <!-- Pass like/dislike actions through the same form -->
                 <?php if ($potentialMatch): ?>
                     <div class="match-card">
@@ -271,8 +273,6 @@ $stmt->closeCursor();
                         <h2>No Matches Available</h2>
                     </div>
                 <?php endif; ?>
-
-            </form>
 
         </div>
     </div>
