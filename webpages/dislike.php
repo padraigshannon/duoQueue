@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// DB connection
+// db connection
 $host = 'sql113.infinityfree.com';
 $db   = 'if0_41396749_duoqueue_db';
 $user = 'if0_41396749';
@@ -24,19 +24,16 @@ $currentUserId = $_SESSION["user_id"];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['disliked_user_id'])) {
     $dislikedUserId = (int)$_POST['disliked_user_id'];
-
-    // Don't allow disliking yourself
+    
     if ($dislikedUserId === $currentUserId) {
         header("Location: matchmake.php");
         exit();
     }
 
     try {
-        // Insert dislike record
         $stmt = $pdo->prepare("INSERT INTO dislikes (user_id, disliked_user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE created_timestamp = CURRENT_TIMESTAMP");
         $stmt->execute([$currentUserId, $dislikedUserId]);
 
-        // Redirect back to matchmake
         header("Location: matchmake.php");
         exit();
 
@@ -44,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['disliked_user_id'])) 
         die("Database error: " . $e->getMessage());
     }
 } else {
-    // Invalid request
     header("Location: matchmake.php");
     exit();
 }
