@@ -72,16 +72,13 @@ $date = date('Y-m-d');
 
     <div class="arcade-screen px-3 d-flex flex-column">
 
-        <!-- Top bar -->
         <div class="d-flex justify-content-between align-items-center mb-2">
             <a href="matches.php" class="btn-arcade btn-arcade-cyan" style="font-size: 9px; padding: 6px 12px; text-decoration: none;">&lt; Back</a>
             <span class="report-date"><?= $date ?></span>
         </div>
 
-        <!-- Report container -->
         <div class="card arcade-card flex-grow-1 d-flex flex-column overflow-hidden">
 
-            <!-- Header -->
             <div class="p-3" style="border-bottom: 3px solid var(--cyan);">
                 <h3 class="mb-0" style="font-size: clamp(10px, 1.2vw, 15px);">Report: <?= $reported_name ?></h3>
             </div>
