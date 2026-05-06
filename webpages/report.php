@@ -40,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $ban_duration = (int)($_POST['ban_duration'] ?? 0);
 
         if ($banned_user_id && $ban_reason && $ban_duration > 0) {
-            // Insert into banned table
             $stmt = $pdo->prepare("
                 INSERT INTO banned (user_id, admin_id, reason, ban_duration)
                 VALUES (?, ?, ?, ?)
@@ -123,16 +122,13 @@ $date = $report['created_timestamp'];
 
     <div class="arcade-screen px-3 d-flex flex-column">
 
-        <!-- Top bar -->
         <div class="d-flex justify-content-between align-items-center mb-2">
             <a href="moderation.php" class="btn-arcade btn-arcade-cyan" style="font-size: 9px; padding: 6px 12px; text-decoration: none;">&lt; Back</a>
             <span class="report-date"><?= $date ?></span>
         </div>
-
-        <!-- Report container -->
+        
         <div class="card arcade-card flex-grow-1 d-flex flex-column overflow-hidden">
 
-            <!-- Header -->
             <div class="p-3" style="border-bottom: 3px solid var(--cyan);">
                 <h3 class="mb-2" style="font-size: clamp(10px, 1.2vw, 15px);">Report: <?= htmlspecialchars($reported) ?></h3>
                 <div class="d-flex flex-column gap-1">
@@ -141,7 +137,6 @@ $date = $report['created_timestamp'];
                 </div>
             </div>
 
-            <!-- Chat logs -->
             <div class="flex-grow-1 d-flex flex-column p-3 overflow-hidden">
                 <span class="text-glow text-center mb-2" style="font-size: clamp(8px, 0.9vw, 11px);">Chatlogs</span>
                 <div class="neon-box p-3 flex-grow-1" style="overflow-y: auto;">
@@ -159,7 +154,6 @@ $date = $report['created_timestamp'];
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="d-flex justify-content-center gap-4 p-3" style="border-top: 3px solid var(--cyan);">
                 <form method="POST" onsubmit="return confirm('Remove this report?');" class="d-inline">
                     <input type="hidden" name="action" value="remove_report">
@@ -171,7 +165,6 @@ $date = $report['created_timestamp'];
                 </button>
             </div>
 
-            <!-- Ban form (hidden by default) -->
             <div id="ban-form" class="ban-form" style="display: none;">
                 <form method="POST" class="d-flex flex-column gap-2">
                     <input type="hidden" name="action" value="ban_user">
