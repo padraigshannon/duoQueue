@@ -29,12 +29,10 @@ if (!empty($_SESSION['is_admin']) && isset($_GET['user_id'])) {
 $success = "";
 $error   = "";
 
-// Fetch existing profile data
 $stmt = $pdo->prepare("SELECT * FROM user_profiles WHERE user_id = ?");
 $stmt->execute([$userId]);
 $profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Fetch user's name
 $stmt = $pdo->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
 $stmt->execute([$userId]);
 $userData = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -134,7 +132,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // new profile, details required
     if ($isNewProfile && empty($error)) {
         if (empty($location))    $error = "Location is required.";
         elseif (empty($dateOfBirth)) $error = "Date of birth is required.";
@@ -145,7 +142,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         elseif (empty($selectedPlatforms))  $error = "Please select at least 1 platform.";
     }
 
-    // profile picture upload handling
     if (empty($error) && isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] === UPLOAD_ERR_OK) {
         $file = $_FILES['profile_photo'];
 
@@ -323,8 +319,6 @@ if (empty($error)) {
 
     <div class="arcade-screen px-3">
         <div class="row g-4">
-
-            <!-- Preview Panel -->
             <div class="col-lg-4">
                 <div class="card arcade-card mb-4">
                     <div class="card-body text-center">
@@ -344,8 +338,7 @@ if (empty($error)) {
                     </div>
                 </div>
             </div>
-
-            <!-- Form Panel -->
+            
             <div class="col-lg-8">
                 <div class="card arcade-card mb-4">
                     <div class="card-body">
