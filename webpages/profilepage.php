@@ -270,7 +270,6 @@ if (!empty($profile['date_of_birth'])) {
         <?php endif; ?>
     </div>
 
-    <!-- Photo Gallery Modal -->
     <div class="modal fade" id="photoGalleryModal" tabindex="-1" aria-labelledby="photoGalleryModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content arcade-modal">
