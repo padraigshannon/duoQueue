@@ -31,7 +31,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($password !== $repeatPassword) {
         $error = "Passwords do not match!";
     } else {
-        // Check if email is already registered
         $stmt = $pdo->prepare("SELECT user_id FROM users WHERE email = ?");
         $stmt->execute([$email]);
 
@@ -39,7 +38,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "An account with that email already exists.";
         } else {
             try {
-                // is_admin and is_banned default to false for every new user
                 $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, is_admin, is_banned) VALUES (?, ?, ?, ?, ?, ?)");
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
