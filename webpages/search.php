@@ -17,7 +17,6 @@ try {
     die("Could not connect to the database. Please try again later.");
 }
 
-// Handle ban action
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
@@ -125,7 +124,6 @@ if (!empty($query) || !empty($selectedGames)) {
         <form id="searchForm" method="GET" action="search.php">
             <div class="row g-3">
 
-                <!-- Game Filter Panel -->
                 <div class="col-4 col-md-3">
                     <div class="card arcade-card">
                         <div class="card-body p-3">
@@ -154,7 +152,6 @@ if (!empty($query) || !empty($selectedGames)) {
                     </div>
                 </div>
 
-                <!-- Search Box and Results -->
                 <div class="col-8 col-md-9">
                     <div class="card arcade-card">
                         <div class="card-body p-3">
@@ -201,8 +198,7 @@ if (!empty($query) || !empty($selectedGames)) {
 
             </div>
         </form>
-
-        <!-- Ban forms outside the search form -->
+        
         <?php if (!empty($results)): ?>
             <?php foreach ($results as $result): ?>
                 <?php if (!empty($_SESSION['is_admin']) && $result['user_id'] != $_SESSION['user_id'] && !$result['is_banned']): ?>
