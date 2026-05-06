@@ -24,7 +24,6 @@ try {
     die("Connection failed.");
 }
 
-// Handle Delete Platform
 if (isset($_GET['delete'])) {
     $platform_id = $_GET['delete'];
 
@@ -35,20 +34,17 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
-// Handle Add Platform
 if (isset($_POST['add_platform'])) {
     $platform_name = trim($_POST['platform_name']);
 
     if (!empty($platform_name)) {
 
-        // Check if platform already exists
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM available_platforms WHERE platform_name = :name");
         $stmt->execute(['name' => $platform_name]);
 
         if ($stmt->fetchColumn() > 0) {
             $_SESSION['message'] = "Platform already exists.";
         } else {
-            // Insert new platform
             $stmt = $pdo->prepare("INSERT INTO available_platforms (platform_name) VALUES (:name)");
             $stmt->execute(['name' => $platform_name]);
 
@@ -63,7 +59,6 @@ if (isset($_POST['add_platform'])) {
     exit();
 }
 
-// Fetch all platforms
 $stmt = $pdo->query("SELECT * FROM available_platforms ORDER BY platform_name ASC");
 $platforms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
