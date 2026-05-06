@@ -25,7 +25,6 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 $limit  = 1;
 
-// Fetch the logged in user's games for the filter panel
 $gamesStmt = $pdo->prepare("
     SELECT ag.game_id, ag.game_name 
     FROM users_games ug
@@ -35,16 +34,13 @@ $gamesStmt = $pdo->prepare("
 $gamesStmt->execute([$userId]);
 $userGames = $gamesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Read excluded game IDs from the form submission — default to empty array
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['exclude_games'])) {
     $_SESSION['exclude_games'] = array_map('intval', $_POST['exclude_games']);
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['liked_user_id'], $_POST['disliked_user_id'])) {
-    // like/dislike submitted — keep existing session value, don't clear it
 }
 
 $excludedGameIds = $_SESSION['exclude_games'] ?? [];
 
-// Build the games score subquery — if games are excluded, add a WHERE clause to filter them out
 $excludeParams = [];
 if (!empty($excludedGameIds)) {
     $paramNames = [];
@@ -138,7 +134,6 @@ $stmt->bindValue(':uid_matches1',  $userId, PDO::PARAM_INT);
 $stmt->bindValue(':uid_matches2',  $userId, PDO::PARAM_INT);
 $stmt->bindValue(':limit',         $limit,  PDO::PARAM_INT);
 
-// Bind each excluded game ID individually
 foreach ($excludeParams as $param => $value) {
     $stmt->bindValue($param, $value, PDO::PARAM_INT);
 }
